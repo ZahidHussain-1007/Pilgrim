@@ -95,19 +95,6 @@ button {
   color: var(--accent-saffron);
 }
 
-.btn-get-started {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--accent-saffron);
-  padding: 8px 16px;
-  border-radius: 8px;
-  transition: background 0.15s ease;
-}
-
-.btn-get-started:hover {
-  background-color: rgba(200, 125, 23, 0.08);
-}
-
 .google-login-button {
   display: inline-flex;
   align-items: center;
@@ -128,8 +115,50 @@ button {
   box-shadow: 0 2px 6px rgba(60, 64, 67, 0.18);
 }
 
-.google-login-button.signed-in {
+.signed-in-account {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.signed-in-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.signed-in-avatar-fallback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-saffron);
+  color: var(--bg-white);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.signed-in-name {
+  max-width: 160px;
+  overflow: hidden;
+  color: var(--text-dark);
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sign-out-button {
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
   color: var(--accent-saffron);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 11px;
+}
+
+.sign-out-button:hover {
+  background-color: rgba(200, 125, 23, 0.08);
 }
 
 .google-mark {
@@ -435,11 +464,13 @@ button {
     gap: 16px;
   }
 
-  .google-login-button {
+  .google-login-button,
+  .signed-in-account {
     padding: 8px;
   }
 
-  .google-login-button span {
+  .google-login-button span,
+  .signed-in-name {
     display: none;
   }
 }

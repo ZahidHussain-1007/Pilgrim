@@ -4,3 +4,4 @@ dist
 .env.*
 public/app.js
 client_secret*.json
+__pycache__/

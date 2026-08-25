@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
@@ -30,6 +30,13 @@ export class AuthController {
   me(@Req() request: Request & { cookies?: Record<string, string> }) {
     const user = this.auth.readSession(request.cookies?.pilgrim_session);
     return { user };
+  }
+
+  @Get('profile')
+  async profile(@Req() request: Request & { cookies?: Record<string, string> }) {
+    const session = this.auth.readSession(request.cookies?.pilgrim_session);
+    if (!session) throw new UnauthorizedException('Sign in required.');
+    return { profile: await this.auth.getProfile(session.googleId) };
   }
 
   @Post('logout')

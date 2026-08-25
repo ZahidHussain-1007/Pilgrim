@@ -11,9 +11,7 @@ import {
   Mic,
   Send,
   Volume2,
-  Loader2,
-  LogIn,
-  LogOut
+  Loader2
 } from 'lucide-react'
 
 const API_BASE_URL = window.location.origin
@@ -131,6 +129,9 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [user, setUser] = useState(null)
+  const [conversationId, setConversationId] = useState(null)
+  const [conversations, setConversations] = useState([])
+  const [favorites, setFavorites] = useState([])
   const threadEndRef = useRef(null)
 
   const t = UI_TRANSLATIONS[lang]
@@ -148,9 +149,65 @@ export default function App() {
 
     fetch(`${API_BASE_URL}/auth/me`, { credentials: 'include' })
       .then((response) => response.ok ? response.json() : null)
-      .then((data) => data?.user && setUser(data.user))
+      .then(async (data) => {
+        if (!data?.user) return
+        const [profileResponse, conversationResponse, favoritesResponse] = await Promise.all([
+          fetch(`${API_BASE_URL}/auth/profile`, { credentials: 'include' }),
+          fetch(`${API_BASE_URL}/api/conversations`, { credentials: 'include' }),
+          fetch(`${API_BASE_URL}/api/favorites`, { credentials: 'include' })
+        ])
+        const profilePayload = profileResponse.ok ? await profileResponse.json() : null
+        setUser({ ...data.user, avatarUrl: profilePayload?.profile?.avatar_url || null })
+        if (conversationResponse.ok) setConversations(await conversationResponse.json())
+        if (favoritesResponse.ok) setFavorites(await favoritesResponse.json())
+      })
       .catch(() => {})
   }, [])
+
+  async function loadConversation(id) {
+    const response = await fetch(`${API_BASE_URL}/api/conversations/${id}/messages`, { credentials: 'include' })
+    if (!response.ok) return
+    const history = await response.json()
+    setConversationId(id)
+    setMessages(history.map((message) => ({ id: message.id, who: message.role === 'assistant' ? 'bot' : 'user', text: message.content })))
+    setActiveTabKey('Home')
+  }
+
+  async function submitFeedback(messageId, rating) {
+    await fetch(`${API_BASE_URL}/api/feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ messageId, rating })
+    })
+  }
+
+  async function toggleFavorite() {
+    if (!user || !selectedTemple) return
+    const existing = favorites.find((favorite) => favorite.item_type === 'temple' && favorite.item_key === selectedTemple)
+    if (existing) {
+      await fetch(`${API_BASE_URL}/api/favorites/temple/${encodeURIComponent(selectedTemple)}`, { method: 'DELETE', credentials: 'include' })
+      setFavorites((prev) => prev.filter((favorite) => favorite.id !== existing.id))
+      return
+    }
+    const temple = TEMPLES_LIST.find((item) => item.slug === selectedTemple)
+    const response = await fetch(`${API_BASE_URL}/api/favorites`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ itemType: 'temple', itemKey: selectedTemple, itemData: temple })
+    })
+    if (response.ok) {
+      const favorite = await response.json()
+      setFavorites((prev) => [favorite, ...prev])
+    }
+  }
+
+  function startNewConversation() {
+    setConversationId(null)
+    setMessages([])
+    setActiveTabKey('Home')
+  }
 
   async function handleSend(textOverride) {
     const text = (textOverride ?? query).trim()
@@ -176,6 +233,7 @@ export default function App() {
           query: text,
           temple: targetTemple,
           language: lang === 'తె' ? 'te' : lang === 'हि' ? 'hi' : 'en'
+          , conversationId
         })
       })
 
@@ -184,7 +242,11 @@ export default function App() {
       }
 
       const data = await response.json()
-      setMessages((prev) => [...prev, { who: 'bot', text: data.reply }])
+      if (data.conversationId) setConversationId(data.conversationId)
+      if (data.conversationId && !conversations.some((item) => item.id === data.conversationId)) {
+        setConversations((prev) => [{ id: data.conversationId, title: text }, ...prev])
+      }
+      setMessages((prev) => [...prev, { id: data.assistantMessageId, who: 'bot', text: data.reply }])
     } catch (err) {
       setMessages((prev) => [...prev, { who: 'bot', text: t.errorMsg }])
     } finally {
@@ -264,19 +326,21 @@ export default function App() {
           <a href="#about" className="nav-link">{t.navAbout}</a>
           <a href="#features" className="nav-link">{t.navFeatures}</a>
           {user ? (
-            <button className="google-login-button signed-in" onClick={signOut} title="Sign out">
-              <LogOut size={16} />
-              <span>{user.name}</span>
-            </button>
+            <div className="signed-in-account">
+              {user.avatarUrl ? (
+                <img className="signed-in-avatar" src={user.avatarUrl} alt="" referrerPolicy="no-referrer" />
+              ) : (
+                <span className="signed-in-avatar signed-in-avatar-fallback" aria-hidden="true">{user.name?.charAt(0) || 'P'}</span>
+              )}
+              <span className="signed-in-name">{user.name}</span>
+              <button className="sign-out-button" onClick={signOut} title="Sign out">Sign out</button>
+            </div>
           ) : (
             <button className="google-login-button" onClick={signInWithGoogle}>
               <GoogleMark />
               <span>Continue with Google</span>
             </button>
           )}
-          <button className="btn-get-started" onClick={() => { setMessages([]); setActiveTabKey('Home'); }}>
-            {t.navGetStarted}
-          </button>
         </div>
       </header>
 
@@ -291,7 +355,7 @@ export default function App() {
                 className={`menu-item ${activeTabKey === item.key ? 'active' : ''}`}
                 onClick={() => {
                   setActiveTabKey(item.key)
-                  if (item.key === 'Home') setMessages([])
+                  if (item.key === 'Home') startNewConversation()
                   if (item.key === 'Temples') handleSend(lang === 'తె' ? 'తెలంగాణలోని అన్ని ప్రముఖ ఆలయాల జాబితా ఇవ్వండి' : lang === 'हि' ? 'तेलंगाना के सभी मुख्य मंदिरों की सूची दें' : 'List all 22 verified temples in Telangana')
                   if (item.key === 'Accommodation') handleSend(lang === 'తె' ? 'యాదాద్రి వద్ద సరసమైన మరియు ఉత్తమ బస వివరాలు' : lang === 'हि' ? 'यादाद्री के पास प्रमाणित होटल' : 'Verified accommodation and stays near Yadadri')
                   if (item.key === 'Darshan Booking') handleSend(lang === 'తె' ? 'యాదాద్రి దర్శనం సమయాలు మరియు టికెట్ వివరాలు' : lang === 'हि' ? 'यादाद्री दर्शन समय और टिकट' : 'Darshan timings and special entry slots for Yadadri')
@@ -323,7 +387,17 @@ export default function App() {
 
         {/* MAIN CONTENT AREA */}
         <main className="main-content">
-          {!isChatMode ? (
+          {activeTabKey === 'My Journey' ? (
+            <div className="chat-conversation">
+              <h2>My Journey</h2>
+              {user ? conversations.map((conversation) => (
+                <button key={conversation.id} className="quick-chip" onClick={() => loadConversation(conversation.id)}>
+                  {conversation.title || 'Untitled conversation'}
+                </button>
+              )) : <p>Sign in to view saved conversations and favorites.</p>}
+              {user && favorites.length > 0 && <><h3>Favorites</h3>{favorites.map((favorite) => <p key={favorite.id}>{favorite.item_type}: {favorite.item_key}</p>)}</>}
+            </div>
+          ) : !isChatMode ? (
             <div className="center-hero">
               <div className="center-om">ॐ</div>
               <h1 className="hero-heading">{t.heading}</h1>
@@ -380,6 +454,7 @@ export default function App() {
                   <div key={idx} className={`chat-bubble ${m.who}`}>
                     {m.text}
                     {m.who === 'bot' && (
+                      <>
                       <button
                         onClick={() => speakText(m.text)}
                         style={{
@@ -396,6 +471,12 @@ export default function App() {
                       >
                         <Volume2 size={14} /> {t.listen}
                       </button>
+                      {m.id && <div className="feedback-actions">
+                        {[1, 2, 3, 4, 5].map((rating) => (
+                          <button key={rating} onClick={() => submitFeedback(m.id, rating)} title={`Rate ${rating} out of 5`}>{rating}</button>
+                        ))}
+                      </div>}
+                      </>
                     )}
                   </div>
                 ))}
@@ -423,6 +504,9 @@ export default function App() {
                   <Send size={20} />
                 </button>
               </div>
+              {user && selectedTemple && <button className="quick-chip" onClick={toggleFavorite}>
+                {favorites.some((favorite) => favorite.item_type === 'temple' && favorite.item_key === selectedTemple) ? 'Remove temple from favorites' : 'Save temple to favorites'}
+              </button>}
             </div>
           )}
         </main>

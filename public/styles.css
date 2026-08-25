@@ -108,6 +108,36 @@ button {
   background-color: rgba(200, 125, 23, 0.08);
 }
 
+.google-login-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 13px;
+  border: 1px solid #DED6CE;
+  border-radius: 8px;
+  background: #fff;
+  color: #3c4043;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.12);
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+
+.google-login-button:hover {
+  border-color: #c8bcae;
+  box-shadow: 0 2px 6px rgba(60, 64, 67, 0.18);
+}
+
+.google-login-button.signed-in {
+  color: var(--accent-saffron);
+}
+
+.google-mark {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+}
+
 /* Main Workspace */
 .workspace {
   display: flex;
@@ -403,5 +433,13 @@ button {
   }
   .nav-links {
     gap: 16px;
+  }
+
+  .google-login-button {
+    padding: 8px;
+  }
+
+  .google-login-button span {
+    display: none;
   }
 }

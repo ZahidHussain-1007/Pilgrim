@@ -11,8 +11,12 @@ import {
   Mic,
   Send,
   Volume2,
-  Loader2
+  Loader2,
+  LogIn,
+  LogOut
 } from 'lucide-react'
+
+const API_BASE_URL = window.location.origin
 
 const TEMPLES_LIST = [
   { slug: 'yadadri', name: 'Yadadri', folder: 'Yadadri_stay', full: 'Sri Lakshmi Narasimha Swamy Temple, Yadadri' },
@@ -126,6 +130,7 @@ export default function App() {
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [isListening, setIsListening] = useState(false)
+  const [user, setUser] = useState(null)
   const threadEndRef = useRef(null)
 
   const t = UI_TRANSLATIONS[lang]
@@ -134,6 +139,18 @@ export default function App() {
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isLoading])
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('login') === 'success') {
+      window.history.replaceState({}, '', window.location.pathname)
+    }
+
+    fetch(`${API_BASE_URL}/auth/me`, { credentials: 'include' })
+      .then((response) => response.ok ? response.json() : null)
+      .then((data) => data?.user && setUser(data.user))
+      .catch(() => {})
+  }, [])
 
   async function handleSend(textOverride) {
     const text = (textOverride ?? query).trim()
@@ -150,7 +167,7 @@ export default function App() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -212,6 +229,18 @@ export default function App() {
     window.speechSynthesis.speak(utterance)
   }
 
+  function signInWithGoogle() {
+    window.location.assign(`${API_BASE_URL}/auth/google`)
+  }
+
+  async function signOut() {
+    try {
+      await fetch(`${API_BASE_URL}/auth/logout`, { method: 'POST', credentials: 'include' })
+    } finally {
+      setUser(null)
+    }
+  }
+
   const navMenuItems = [
     { key: 'Home', icon: <Home size={18} /> },
     { key: 'Temples', icon: <Landmark size={18} /> },
@@ -234,6 +263,17 @@ export default function App() {
         <div className="nav-links">
           <a href="#about" className="nav-link">{t.navAbout}</a>
           <a href="#features" className="nav-link">{t.navFeatures}</a>
+          {user ? (
+            <button className="google-login-button signed-in" onClick={signOut} title="Sign out">
+              <LogOut size={16} />
+              <span>{user.name}</span>
+            </button>
+          ) : (
+            <button className="google-login-button" onClick={signInWithGoogle}>
+              <GoogleMark />
+              <span>Continue with Google</span>
+            </button>
+          )}
           <button className="btn-get-started" onClick={() => { setMessages([]); setActiveTabKey('Home'); }}>
             {t.navGetStarted}
           </button>
@@ -388,5 +428,16 @@ export default function App() {
         </main>
       </div>
     </div>
+  )
+}
+
+function GoogleMark() {
+  return (
+    <svg className="google-mark" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#4285F4" d="M21.8 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.5a4.7 4.7 0 0 1-2.04 3.08v2.51h3.32c1.94-1.79 3.02-4.42 3.02-7.42Z" />
+      <path fill="#34A853" d="M12 22c2.75 0 5.05-.91 6.74-2.35l-3.32-2.51c-.92.62-2.1.99-3.42.99-2.64 0-4.88-1.78-5.68-4.18H2.89v2.59A10.18 10.18 0 0 0 12 22Z" />
+      <path fill="#FBBC05" d="M6.32 13.95A6.11 6.11 0 0 1 6 12c0-.68.12-1.34.32-1.95V7.46H2.89A10 10 0 0 0 1.8 12c0 1.62.39 3.15 1.09 4.54l3.43-2.59Z" />
+      <path fill="#EA4335" d="M12 5.87c1.5 0 2.85.52 3.91 1.54l2.93-2.93C17.04 2.8 14.75 2 12 2a10.18 10.18 0 0 0-9.11 5.46l3.43 2.59C7.12 7.65 9.36 5.87 12 5.87Z" />
+    </svg>
   )
 }

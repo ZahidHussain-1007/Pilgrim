@@ -1,0 +1,26 @@
+{
+  "temple_id": "T0020",
+  "name": "Beechupally Anjaneya Swamy Temple",
+  "last_verified": "2026-08-21",
+  "location": {
+    "district": "Jogulamba Gadwal",
+    "latitude": 16.0833,
+    "longitude": 77.8167
+  },
+  "darshan_and_tickets": {
+    "general_darshan": "Free",
+    "special_darshan": "Paid (amount not specified)"
+  },
+  "sevas": [
+    {
+      "name": "Abhishekam",
+      "charges": "Paid (amount not specified)"
+    }
+  ],
+  "travel": {
+    "distances": [
+      "Hyderabad: ~180 km"
+    ],
+    "nearest_railway_station": "Gadwal (~16 km)"
+  }
+}

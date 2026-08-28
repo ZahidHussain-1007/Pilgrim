@@ -1,0 +1,39 @@
+{
+  "temple_id": "T0001",
+  "name": "Sri Lakshmi Narasimha Swamy Temple",
+  "last_verified": "2026-08-21",
+  "location": {
+    "district": "Yadadri Bhuvanagiri District",
+    "pincode": "508115",
+    "latitude": 17.5886069,
+    "longitude": 78.9412785
+  },
+  "contact": {
+    "official_website": "https://yadagiriguttatemple.telangana.gov.in/"
+  },
+  "darshan_and_tickets": {
+    "general_darshan": "Sarva Darshan is free during official windows.",
+    "special_darshan": "VIP Break Darshan. Confirm fees at the counter."
+  },
+  "sevas": [
+    {
+      "name": "Sarva Darshan (General Darshan)",
+      "charges": "Free"
+    },
+    {
+      "name": "Kalyanotsavam",
+      "charges": "Paid (amount not specified)"
+    }
+  ],
+  "accommodation": {
+    "price_range": "Temple-managed rooms generally cost between \u20b9300 and \u20b91,500 per night"
+  },
+  "travel": {
+    "distances": [
+      "Hyderabad: ~65 km"
+    ],
+    "nearest_railway_station": "Raigir Railway Station (~5 km)",
+    "nearest_bus_station": "Yadagirigutta Bus Stand (~1 km)",
+    "nearest_airport": "Rajiv Gandhi International Airport, Hyderabad (~90 km)"
+  }
+}

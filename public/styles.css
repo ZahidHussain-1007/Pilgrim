@@ -273,6 +273,8 @@ button {
   overflow-y: auto;
 }
 
+.temples-page-main { justify-content: flex-start; }
+
 .center-hero {
   max-width: 780px;
   width: 100%;
@@ -281,6 +283,17 @@ button {
   align-items: center;
   text-align: center;
 }
+
+.home-hero { position: relative; }
+.home-hero .hero-subtext { max-width: 620px; line-height: 1.6; }
+.home-voice-label { display: block; margin: -22px 0 27px; color: var(--text-muted); font-size: 11px; letter-spacing: 0.04em; }
+.home-hero .quick-chips-row { margin-bottom: 26px; }
+.home-plan-cta { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; margin-top: 20px; }
+.home-plan-button { display: inline-flex; align-items: center; gap: 9px; border: 1px solid #D6A04E; border-radius: 10px; background: linear-gradient(110deg, #C87D17, #d9952d, #C87D17); background-size: 200% 100%; color: #fffdf9; font-size: 13px; font-weight: 800; padding: 12px 15px; box-shadow: 0 6px 17px rgba(200, 125, 23, 0.24); transition: transform 0.2s ease, box-shadow 0.2s ease, background-position 0.35s ease; }
+.home-plan-button:hover { background-position: 100% 0; box-shadow: 0 9px 22px rgba(200, 125, 23, 0.31); transform: translateY(-2px); }
+.home-plan-button span:last-child { font-size: 16px; transition: transform 0.2s ease; }
+.home-plan-button:hover span:last-child { transform: translateX(3px); }
+.home-capability-strip { margin-top: 27px; color: #9C8E82; font-size: 11px; letter-spacing: 0.02em; line-height: 1.8; }
 
 .center-om {
   font-size: 34px;
@@ -452,6 +465,127 @@ button {
   font-weight: 500;
 }
 
+/* Temple discovery page */
+.temple-discovery { --discovery-ink: #2B1D12; --discovery-muted: #7A6F66; --discovery-line: #EADBCB; width: 100%; max-width: 1180px; padding: 12px 0 36px; }
+.temple-discovery-hero { position: relative; overflow: hidden; margin-bottom: 42px; border: 1px solid #E9D8C1; border-radius: 22px; background: radial-gradient(circle at 88% 18%, rgba(226, 166, 77, 0.18), transparent 34%), linear-gradient(135deg, #fffdf9 0%, #f9eee1 100%); padding: 52px 58px 48px; box-shadow: 0 12px 32px rgba(69, 43, 21, 0.07); }
+.temple-discovery-hero::after { position: absolute; right: -38px; bottom: -58px; width: 210px; height: 210px; border: 1px solid rgba(200, 125, 23, 0.18); border-radius: 50%; box-shadow: 0 0 0 18px rgba(200, 125, 23, 0.04), 0 0 0 36px rgba(200, 125, 23, 0.025); content: ''; }
+.temple-discovery-kicker, .temple-discovery-eyebrow, .temple-discovery-card-location { color: var(--accent-saffron); font-size: 11px; font-weight: 800; letter-spacing: 0.15em; }
+.temple-discovery-hero h1 { position: relative; z-index: 1; max-width: 620px; margin: 13px 0 10px; color: var(--discovery-ink); font-family: 'Cinzel', serif; font-size: 48px; font-weight: 600; line-height: 1.12; }
+.temple-discovery-hero p { position: relative; z-index: 1; max-width: 520px; margin-bottom: 28px; color: var(--discovery-muted); font-size: 16px; line-height: 1.7; }
+.temple-discovery-search { position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; max-width: 650px; border: 1px solid #D6A869; border-radius: 12px; background: rgba(255, 255, 255, 0.9); padding: 0 17px; box-shadow: 0 7px 20px rgba(93, 57, 24, 0.08); }
+.temple-discovery-search svg { flex: 0 0 auto; color: var(--accent-saffron); }
+.temple-discovery-search input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--discovery-ink); font: inherit; padding: 16px 0; }
+.temple-discovery-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
+.temple-discovery-section-heading h2 { margin-top: 7px; color: var(--discovery-ink); font-family: 'Cinzel', serif; font-size: 28px; font-weight: 600; }
+.temple-discovery-count { color: var(--discovery-muted); font-size: 13px; font-weight: 700; }
+.temple-discovery-featured { position: relative; min-height: 390px; margin-bottom: 48px; overflow: hidden; border: 1px solid var(--discovery-line); border-radius: 18px; background: #6B4026; box-shadow: 0 12px 28px rgba(69, 43, 21, 0.08); }
+.temple-discovery-featured-image { position: absolute; inset: 0; overflow: hidden; background: #6B4026; }
+.temple-discovery-featured-image img, .temple-discovery-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.45s ease; }
+.temple-discovery-featured:hover img, .temple-discovery-card:hover img { transform: scale(1.04); }
+.temple-discovery-image-wash { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(39, 22, 11, 0.12) 0%, rgba(39, 22, 11, 0.1) 42%, rgba(39, 22, 11, 0.72) 100%), linear-gradient(0deg, rgba(39, 22, 11, 0.72), transparent 56%); }
+.temple-discovery-film-badge, .temple-discovery-drone-tag { position: absolute; left: 20px; bottom: 18px; border: 1px solid rgba(255, 250, 240, 0.5); border-radius: 99px; background: rgba(43, 29, 18, 0.68); color: #fffaf0; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; padding: 8px 11px; }
+.temple-discovery-play-mark { position: absolute; top: 50%; left: 50%; display: grid; width: 54px; height: 54px; place-items: center; border: 1px solid rgba(255, 255, 255, 0.75); border-radius: 50%; background: rgba(255, 255, 255, 0.18); color: #fff; font-size: 23px; transform: translate(-50%, -50%); }
+.temple-discovery-featured-copy { position: absolute; right: 34px; bottom: 30px; z-index: 1; display: flex; width: min(390px, calc(100% - 68px)); flex-direction: column; align-items: flex-start; justify-content: center; border: 1px solid rgba(255, 247, 234, 0.28); border-radius: 12px; background: rgba(43, 29, 18, 0.72); padding: 28px 30px; color: #fffaf2; box-shadow: 0 16px 30px rgba(25, 14, 7, 0.18); backdrop-filter: blur(3px); }
+.temple-discovery-featured-copy .temple-discovery-eyebrow { color: #efc27a; }
+.temple-discovery-featured-copy h3 { max-width: 350px; margin: 12px 0 10px; color: #fffaf2; font-family: 'Cinzel', serif; font-size: 30px; font-weight: 600; line-height: 1.25; }
+.temple-discovery-featured-copy p { margin-bottom: 26px; color: #dfcdb8; }
+.temple-discovery-primary { border-radius: 10px; background: var(--accent-saffron); color: #fff; font-weight: 800; padding: 12px 17px; box-shadow: 0 7px 16px rgba(200, 125, 23, 0.2); transition: background 0.2s ease, transform 0.2s ease; }
+.temple-discovery-primary:hover { background: var(--accent-saffron-hover); transform: translateY(-2px); }
+.temple-discovery-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.temple-discovery-filters button { border: 1px solid var(--discovery-line); border-radius: 99px; background: #fff; color: var(--discovery-muted); font-size: 12px; font-weight: 700; padding: 9px 13px; }
+.temple-discovery-filters button.active { border-color: var(--accent-saffron); background: #fff4e5; color: var(--accent-saffron); }
+.temple-discovery-filters button:disabled { cursor: not-allowed; opacity: 0.48; }
+.temple-discovery-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.temple-discovery-card { overflow: hidden; border: 1px solid var(--discovery-line); border-radius: 15px; background: #fff; box-shadow: 0 5px 16px rgba(69, 43, 21, 0.05); transition: box-shadow 0.25s ease, transform 0.25s ease; animation: temple-discovery-rise 0.45s ease both; }
+.temple-discovery-card:hover { box-shadow: 0 14px 26px rgba(69, 43, 21, 0.12); transform: translateY(-4px); }
+.temple-discovery-card-image { position: relative; display: grid; height: 130px; place-items: center; overflow: hidden; background: linear-gradient(135deg, #f1d9b7, #c77d45 72%, #713e25); color: rgba(255, 255, 255, 0.75); font-family: 'Cinzel', serif; font-size: 40px; }
+.temple-discovery-card-image::after { position: absolute; inset: 14px; border: 1px solid rgba(255, 255, 255, 0.26); border-radius: 10px; content: ''; }
+.temple-discovery-card-image img { position: absolute; inset: 0; }
+.temple-discovery-placeholder-mark { position: relative; z-index: 1; display: grid; width: 58px; height: 58px; place-items: center; border: 1px solid rgba(255, 251, 242, 0.58); border-radius: 50%; color: rgba(255, 251, 242, 0.88); font-size: 30px; }
+.temple-discovery-placeholder-caption { position: absolute; right: 20px; bottom: 16px; left: 20px; color: rgba(255, 251, 242, 0.68); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; font-weight: 800; letter-spacing: 0.16em; text-align: center; }
+.temple-discovery-drone-tag { z-index: 1; left: 12px; bottom: 12px; font-size: 9px; letter-spacing: 0; padding: 6px 9px; }
+.temple-discovery-card-body { padding: 19px 19px 20px; }
+.temple-discovery-card-body h3 { margin: 8px 0 7px; color: var(--discovery-ink); font-family: 'Cinzel', serif; font-size: 20px; font-weight: 600; }
+.temple-discovery-card-body p { min-height: 42px; color: var(--discovery-muted); font-size: 12px; line-height: 1.6; }
+.temple-discovery-card-body button { margin-top: 16px; color: var(--accent-saffron); font-size: 13px; font-weight: 800; }
+.temple-discovery-empty { border: 1px dashed var(--discovery-line); border-radius: 12px; color: var(--discovery-muted); padding: 25px; text-align: center; }
+.temple-discovery-purpose-heading { margin-top: 52px; }
+.temple-discovery-purpose-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.temple-discovery-purpose { display: flex; min-height: 142px; flex-direction: column; align-items: flex-start; border: 1px solid var(--discovery-line); border-radius: 14px; background: #fffdf9; color: var(--discovery-ink); padding: 17px; text-align: left; transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease; }
+.temple-discovery-purpose:hover { border-color: var(--border-gold); box-shadow: 0 10px 20px rgba(69, 43, 21, 0.08); transform: translateY(-3px); }
+.temple-discovery-purpose > span { margin-bottom: 17px; font-size: 25px; }
+.temple-discovery-purpose strong { font-size: 13px; }
+.temple-discovery-purpose small { margin-top: auto; color: var(--discovery-muted); font-size: 10px; }
+
+@keyframes temple-discovery-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Interactive sacred map */
+.temple-discovery-map-heading { margin-top: 8px; }
+.temple-discovery-map-heading h2 { max-width: 560px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15px; font-weight: 500; line-height: 1.6; }
+.temple-discovery-map-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, 0.75fr); gap: 18px; margin-bottom: 54px; }
+.temple-discovery-map { position: relative; min-height: 500px; overflow: hidden; border: 1px solid #D8C4A8; border-radius: 18px; background: #f3e8d8; box-shadow: inset 0 0 0 8px rgba(255, 253, 249, 0.32), 0 12px 28px rgba(69, 43, 21, 0.07); }
+.temple-discovery-map::before { position: absolute; inset: 0; opacity: 0.34; background-image: radial-gradient(#b77b42 0.7px, transparent 0.7px); background-size: 19px 19px; content: ''; mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent); }
+.temple-discovery-map::after { position: absolute; inset: 42px 8%; border: 1px solid rgba(111, 69, 34, 0.1); border-radius: 48% 52% 45% 55% / 39% 44% 56% 61%; content: ''; transform: rotate(-10deg); }
+.temple-discovery-map-outline { position: absolute; inset: 80px 14% 82px; border: 1px solid rgba(139, 83, 43, 0.26); border-radius: 48% 38% 53% 42% / 35% 48% 44% 57%; transform: rotate(-8deg); }
+.temple-discovery-map-outline span { position: absolute; display: block; border: 1px solid rgba(200, 125, 23, 0.2); border-radius: 50%; }
+.temple-discovery-map-outline span:nth-child(1) { inset: 8% 28% 55% 13%; }
+.temple-discovery-map-outline span:nth-child(2) { inset: 41% 10% 15% 44%; }
+.temple-discovery-map-outline span:nth-child(3) { inset: 65% 43% 5% 5%; }
+.temple-discovery-map-outline span:nth-child(4) { inset: 24% 48% 31% 26%; border-color: rgba(200, 125, 23, 0.13); }
+.temple-discovery-map-label { position: absolute; top: 30px; left: 32px; z-index: 1; color: rgba(91, 53, 28, 0.55); font-family: 'Cinzel', serif; font-size: 24px; font-weight: 600; letter-spacing: 0.08em; line-height: 1.15; }
+.temple-discovery-map-label small { color: rgba(200, 125, 23, 0.72); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 9px; letter-spacing: 0.2em; }
+.temple-discovery-map-stars { position: absolute; inset: 0; opacity: 0.55; background-image: radial-gradient(#b77b42 0.7px, transparent 0.7px); background-size: 19px 19px; }
+.temple-discovery-map-markers { position: absolute; inset: 96px 28px 76px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(5, minmax(0, 1fr)); align-items: center; justify-items: center; }
+.temple-discovery-marker { position: relative; z-index: 2; display: flex; width: 100px; grid-column: var(--marker-column); grid-row: var(--marker-row); flex-direction: column; align-items: center; gap: 5px; color: #6e4930; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.temple-discovery-marker-dot { display: block; width: 12px; height: 12px; border: 3px solid #fff5e8; border-radius: 50%; background: var(--accent-saffron); box-shadow: 0 2px 7px rgba(92, 49, 18, 0.24); transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.temple-discovery-marker:hover .temple-discovery-marker-dot, .temple-discovery-marker.selected .temple-discovery-marker-dot { transform: scale(1.45); box-shadow: 0 0 0 7px rgba(200, 125, 23, 0.18), 0 3px 9px rgba(92, 49, 18, 0.25); }
+.temple-discovery-marker-name { max-width: 86px; overflow: hidden; text-overflow: ellipsis; }
+.temple-discovery-marker-tooltip { position: absolute; bottom: calc(100% + 13px); left: 50%; display: flex; width: 172px; flex-direction: column; gap: 4px; border: 1px solid #d8b47b; border-radius: 10px; background: rgba(255, 253, 249, 0.98); padding: 11px 13px; color: var(--discovery-ink); text-align: left; opacity: 0; pointer-events: none; transform: translate(-50%, 5px); transition: opacity 0.2s ease, transform 0.2s ease; box-shadow: 0 10px 24px rgba(69, 43, 21, 0.16); }
+.temple-discovery-marker-tooltip::after { position: absolute; bottom: -5px; left: calc(50% - 5px); width: 8px; height: 8px; border-right: 1px solid #d8b47b; border-bottom: 1px solid #d8b47b; background: #fffdf9; content: ''; transform: rotate(45deg); }
+.temple-discovery-marker:hover .temple-discovery-marker-tooltip, .temple-discovery-marker:focus-visible .temple-discovery-marker-tooltip { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+.temple-discovery-marker-tooltip strong { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600; }
+.temple-discovery-marker-tooltip small { color: var(--discovery-muted); font-size: 10px; }
+.temple-discovery-marker-tooltip em { margin-top: 5px; color: var(--accent-saffron); font-size: 10px; font-style: normal; font-weight: 800; }
+.temple-discovery-marker.selected { color: var(--discovery-ink); }
+.temple-discovery-map-legend { position: absolute; right: 28px; bottom: 24px; left: 28px; z-index: 2; display: flex; justify-content: space-between; border-top: 1px solid rgba(139, 83, 43, 0.18); color: #85664d; font-size: 10px; padding-top: 12px; }
+.temple-discovery-map-legend i { display: inline-block; width: 7px; height: 7px; margin-right: 5px; border: 2px solid #fff5e8; border-radius: 50%; background: var(--accent-saffron); vertical-align: 1px; }
+.temple-discovery-selected { position: relative; display: flex; min-height: 500px; flex-direction: column; align-items: flex-start; justify-content: center; border: 1px solid #d8c4a8; border-radius: 18px; background: #fffdf9; padding: 34px; box-shadow: 0 12px 28px rgba(69, 43, 21, 0.07); }
+.temple-discovery-selected::before { position: absolute; top: 22px; right: 22px; width: 52px; height: 52px; border: 1px solid rgba(200, 125, 23, 0.3); border-radius: 50%; content: ''; }
+.temple-discovery-selected-number { margin: 12px 0 42px; color: #b88a59; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; }
+.temple-discovery-selected h3 { max-width: 250px; margin-bottom: 10px; color: var(--discovery-ink); font-family: 'Cinzel', serif; font-size: 32px; font-weight: 600; line-height: 1.15; }
+.temple-discovery-selected p { color: var(--discovery-muted); font-size: 14px; line-height: 1.65; }
+.temple-discovery-selected-location { margin-top: 16px; color: #8b6d52; font-size: 12px; }
+.temple-discovery-selected-badge { margin-top: 21px; color: var(--accent-saffron); font-size: 10px; font-weight: 800; letter-spacing: 0.1em; }
+.temple-discovery-selected-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.temple-discovery-selected-actions > button:last-child { border: 1px solid var(--border-gold); border-radius: 10px; color: var(--accent-saffron); font-weight: 800; padding: 12px 16px; }
+.temple-discovery-primary span { display: inline-block; transition: transform 0.2s ease; }
+.temple-discovery-primary:hover span { transform: translateX(4px); }
+
+/* Yadadri temple prototype */
+.temples-prototype { width: 100%; max-width: 1120px; }
+.temple-search-panel { max-width: 560px; margin-bottom: 24px; }
+.temple-search-label { display: block; margin-bottom: 8px; color: var(--text-dark); font-size: 18px; font-weight: 700; }
+.temple-search-input { width: 100%; border: 1px solid var(--border-gold); border-radius: 10px; background: var(--bg-white); color: var(--text-dark); font: inherit; outline: none; padding: 13px 15px; }
+.temple-search-input:focus { border-color: var(--accent-saffron); box-shadow: 0 0 0 3px rgba(200, 125, 23, 0.12); }
+.temple-search-result { display: flex; width: 100%; flex-direction: column; gap: 4px; margin-top: 10px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--bg-white); color: var(--text-dark); padding: 14px 15px; text-align: left; }
+.temple-search-result:hover { border-color: var(--accent-saffron); background: #fff9f1; }
+.temple-search-result span { font-weight: 700; }
+.temple-search-result small { color: var(--text-muted); font-size: 13px; }
+.yadadri-hero { position: fixed; inset: 0; width: 100vw; height: 100vh; min-height: 100vh; overflow: hidden; border-radius: 0; background: #1b1008; isolation: isolate; z-index: 100; }
+.yadadri-video { position: absolute; top: 50%; left: 50%; width: 177.78vh; min-width: 100%; height: 56.25vw; min-height: 100%; border: 0; pointer-events: none; transform: translate(-50%, -50%); z-index: -2; }
+.yadadri-fallback { position: absolute; inset: 0; z-index: -2; background: #1b1008; }
+.yadadri-video-shield { position: absolute; inset: 0; z-index: 0; background: transparent; pointer-events: auto; }
+.yadadri-overlay { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(30, 17, 8, 0.8) 0%, rgba(30, 17, 8, 0.12) 62%), linear-gradient(90deg, rgba(30, 17, 8, 0.7) 0%, rgba(30, 17, 8, 0.12) 65%); z-index: -1; }
+.yadadri-back { position: absolute; top: 28px; left: 32px; z-index: 3; pointer-events: auto; border: 1px solid rgba(255, 246, 232, 0.75); border-radius: 9px; background: rgba(30, 17, 8, 0.38); color: #fffdf9; font-weight: 700; padding: 10px 14px; }
+.yadadri-back:hover { background: rgba(30, 17, 8, 0.66); }
+.yadadri-content { position: relative; z-index: 1; display: flex; min-height: 100vh; max-width: 680px; flex-direction: column; justify-content: end; align-items: flex-start; padding: 72px 56px; color: #fffdf9; }
+.yadadri-label { margin-bottom: 14px; color: #f4bd62; font-size: 13px; font-weight: 700; letter-spacing: 0.16em; }
+.yadadri-content h1 { margin: 0; font-family: 'Cinzel', serif; font-size: clamp(28px, 4vw, 48px); font-weight: 600; line-height: 1.2; }
+.yadadri-content p { margin: 14px 0 28px; font-size: 17px; }
+.yadadri-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.yadadri-actions button { border: 1px solid rgba(255, 246, 232, 0.75); border-radius: 9px; background: rgba(255, 253, 249, 0.12); color: #fffdf9; font-weight: 700; padding: 11px 16px; }
+.yadadri-actions button:first-child { border-color: var(--accent-saffron); background: var(--accent-saffron); }
+
 /* Responsive */
 @media (max-width: 860px) {
   .sidebar {
@@ -473,4 +607,58 @@ button {
   .signed-in-name {
     display: none;
   }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .yadadri-hero,
+  .yadadri-content {
+    min-height: 100vh;
+  }
+
+  .yadadri-content {
+    padding: 32px 24px;
+  }
+
+  .yadadri-back {
+    top: 20px;
+    left: 20px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .temple-discovery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .temple-discovery-purpose-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .temple-discovery-map-layout { grid-template-columns: 1fr; }
+  .temple-discovery-selected { min-height: auto; }
+}
+
+@media (max-width: 700px) {
+  .temple-discovery { padding-top: 0; }
+  .temple-discovery-hero { margin-bottom: 32px; border-radius: 16px; padding: 34px 24px 28px; }
+  .temple-discovery-hero h1 { font-size: 36px; }
+  .temple-discovery-section-heading { align-items: flex-start; flex-direction: column; }
+  .temple-discovery-featured { min-height: 470px; }
+  .temple-discovery-featured-copy { right: 20px; bottom: 20px; width: calc(100% - 40px); padding: 24px; }
+  .temple-discovery-featured-copy h3 { font-size: 25px; }
+  .temple-discovery-map { min-height: 470px; }
+  .temple-discovery-map-outline { inset: 80px 10% 82px; }
+  .temple-discovery-map-markers { inset: 96px 16px 72px; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(8, minmax(0, 1fr)); }
+  .temple-discovery-marker { width: 72px; grid-column: auto; grid-row: auto; font-size: 9px; }
+  .temple-discovery-marker-name { max-width: 72px; }
+  .temple-discovery-map-label { left: 24px; }
+  .temple-discovery-map-legend { right: 18px; left: 18px; }
+  .temple-discovery-grid { grid-template-columns: 1fr; }
+  .temple-discovery-purpose-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 420px) {
+  .temple-discovery-purpose-grid { grid-template-columns: 1fr; }
+  .temple-discovery-purpose { min-height: 110px; }
+}
+
+@media (max-width: 560px) {
+  .home-plan-cta { flex-wrap: wrap; gap: 8px; }
+  .home-capability-strip { max-width: 310px; }
 }

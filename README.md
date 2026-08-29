@@ -100,3 +100,25 @@ Content-Type: application/json
 ```
 
 NestJS forwards the same payload to `FASTAPI_URL/api/chat` (the worker, default `http://localhost:8000/api/chat`). The worker then calls `RAG_AGENT_URL/api/chat` and returns its response. The RAG agent should return a JSON object containing at least `reply`.
+
+## Yadadri temple video prototype
+
+The existing **Temples** sidebar item contains a limited frontend-only prototype for one temple: Yadadri. It does not call the RAG service, backend APIs, Supabase, or the database.
+
+1. Click **Temples** in the sidebar.
+2. Use the local `Search temples...` input. The only prototype result is **Yadadri**.
+3. Select Yadadri to open a full-screen cinematic overlay.
+4. Use **← Back to Temples** to close the overlay and return to the Temples search view.
+
+The overlay uses the YouTube embed for video ID `TL1ikdUlD3M` as a muted, autoplaying, looping background. The embed is not downloaded or stored locally. A transparent dark gradient keeps the temple text readable, and the **Explore Temple** and **Ask AI** buttons are currently visual-only.
+
+The implementation is limited to:
+
+- `public/app.jsx` — local Yadadri data, search/result state, and overlay markup.
+- `public/styles.css` — full-viewport video, overlay, and responsive presentation styles.
+
+After changing either frontend file, regenerate the browser bundle:
+
+```bash
+npm run build:client
+```

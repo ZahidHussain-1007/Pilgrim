@@ -16,6 +16,29 @@ import {
 
 const API_BASE_URL = window.location.origin
 
+const TEMPLE_DRONE_VIDEOS = {
+  yadadri: 'TL1ikdUlD3M',
+  jogulamba: 'jWT9wJk4wcg',
+  kaleswara: 'nXmFtN9VM0M',
+  birla_mandir: 'dnyJZ9dBwzM',
+  sanghi: 'QChoYxGonNM',
+  keesaragutta: 'S1hu6aHl4Fk',
+  ramappa: '5jjgCUMXDsQ',
+  kommuravelli: 'xPReAgNlPYU',
+  swarnagiri: 'ZpJf6FsMvcg',
+  medaram: 'xerl2SvuUTU',
+  surendrapuri: 'KgrN56qZVK0',
+  kondagattu: 'vDJYs4iFhjw',
+  thousand_pillar: '-Cux_v113Fo',
+  manyamkonda: 'KkZfnMVokHw',
+  bhadrachalam: 'rLAyTXA8VtQ',
+}
+
+function getTempleDroneVideo(temple) {
+  const videoId = TEMPLE_DRONE_VIDEOS[temple?.slug]
+  return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&loop=1&playlist=${videoId}&playsinline=1&rel=0&modestbranding=1&iv_load_policy=3` : null
+}
+
 const TEMPLES_LIST = [
   { slug: 'yadadri', name: 'Yadadri', folder: 'Yadadri_stay', full: 'Sri Lakshmi Narasimha Swamy Temple, Yadadri' },
   { slug: 'surendrapuri', name: 'Surendrapuri', folder: 'Surendrapuri_stay', full: 'Surendrapuri Mythological Theme & Temples' },
@@ -41,6 +64,32 @@ const TEMPLES_LIST = [
   { slug: 'thousand_pillar', name: 'Thousand Pillar', folder: 'Thousand_pillar_stay', full: 'Thousand Pillar Temple, Warangal' },
   { slug: 'vemulawada', name: 'Vemulawada', folder: 'vemulawada_stay', full: 'Sri Raja Rajeshwara Swamy, Vemulawada' },
 ]
+
+const CONSTELLATION_POSITIONS = {
+  yadadri: { '--marker-column': 1, '--marker-row': 1 },
+  surendrapuri: { '--marker-column': 2, '--marker-row': 1 },
+  swarnagiri: { '--marker-column': 3, '--marker-row': 1 },
+  basara: { '--marker-column': 4, '--marker-row': 1 },
+  beechupally: { '--marker-column': 5, '--marker-row': 1 },
+  bhadrachalam: { '--marker-column': 1, '--marker-row': 2 },
+  bhadrakali: { '--marker-column': 2, '--marker-row': 2 },
+  birla_mandir: { '--marker-column': 3, '--marker-row': 2 },
+  chilkur: { '--marker-column': 4, '--marker-row': 2 },
+  dharmapuri: { '--marker-column': 5, '--marker-row': 2 },
+  edupayala: { '--marker-column': 1, '--marker-row': 3 },
+  jamalapuram: { '--marker-column': 2, '--marker-row': 3 },
+  jogulamba: { '--marker-column': 3, '--marker-row': 3 },
+  kaleswara: { '--marker-column': 4, '--marker-row': 3 },
+  keesaragutta: { '--marker-column': 5, '--marker-row': 3 },
+  kommuravelli: { '--marker-column': 1, '--marker-row': 4 },
+  kondagattu: { '--marker-column': 2, '--marker-row': 4 },
+  manyamkonda: { '--marker-column': 3, '--marker-row': 4 },
+  medaram: { '--marker-column': 4, '--marker-row': 4 },
+  ramappa: { '--marker-column': 5, '--marker-row': 4 },
+  sanghi: { '--marker-column': 2, '--marker-row': 5 },
+  thousand_pillar: { '--marker-column': 3, '--marker-row': 5 },
+  vemulawada: { '--marker-column': 4, '--marker-row': 5 },
+}
 
 const UI_TRANSLATIONS = {
   EN: {
@@ -132,10 +181,36 @@ export default function App() {
   const [conversationId, setConversationId] = useState(null)
   const [conversations, setConversations] = useState([])
   const [favorites, setFavorites] = useState([])
+  const [templeSearch, setTempleSearch] = useState('')
+  const [selectedDiscoveryTemple, setSelectedDiscoveryTemple] = useState(TEMPLES_LIST[0])
+  const [isYadadriSelected, setIsYadadriSelected] = useState(false)
   const threadEndRef = useRef(null)
 
   const t = UI_TRANSLATIONS[lang]
   const isChatMode = messages.length > 0
+  function openTempleExperience(temple) {
+    setSelectedDiscoveryTemple(temple)
+    setIsYadadriSelected(true)
+  }
+
+  function selectDiscoveryTemple(temple) {
+    setSelectedDiscoveryTemple(temple)
+    setSelectedTemple(temple.slug)
+  }
+
+  function openPurpose(key) {
+    const purposeQueries = {
+      Darshan: 'Darshan timings and special entry slots for Yadadri',
+      Rituals: 'Explain the main rituals and poojas at Vemulawada',
+      Travel: 'How to reach Bhadrachalam from Hyderabad by bus and train',
+      Accommodation: 'Verified accommodation and stays near Yadadri',
+      Restaurants: 'Find restaurants near Telangana temples',
+      Emergency: 'Emergency contacts and help for pilgrims in Telangana',
+    }
+    const targetTab = { Darshan: 'Darshan Booking', Rituals: 'Rituals', Travel: 'Travel Guide', Accommodation: 'Accommodation' }[key]
+    if (targetTab) setActiveTabKey(targetTab)
+    handleSend(purposeQueries[key])
+  }
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -356,6 +431,10 @@ export default function App() {
                 onClick={() => {
                   setActiveTabKey(item.key)
                   if (item.key === 'Home') startNewConversation()
+                  if (item.key === 'Temples') {
+                    setIsYadadriSelected(false)
+                    return
+                  }
                   if (item.key === 'Temples') handleSend(lang === 'తె' ? 'తెలంగాణలోని అన్ని ప్రముఖ ఆలయాల జాబితా ఇవ్వండి' : lang === 'हि' ? 'तेलंगाना के सभी मुख्य मंदिरों की सूची दें' : 'List all 22 verified temples in Telangana')
                   if (item.key === 'Accommodation') handleSend(lang === 'తె' ? 'యాదాద్రి వద్ద సరసమైన మరియు ఉత్తమ బస వివరాలు' : lang === 'हि' ? 'यादाद्री के पास प्रमाणित होटल' : 'Verified accommodation and stays near Yadadri')
                   if (item.key === 'Darshan Booking') handleSend(lang === 'తె' ? 'యాదాద్రి దర్శనం సమయాలు మరియు టికెట్ వివరాలు' : lang === 'हि' ? 'यादाद्री दर्शन समय और टिकट' : 'Darshan timings and special entry slots for Yadadri')
@@ -386,8 +465,48 @@ export default function App() {
         </aside>
 
         {/* MAIN CONTENT AREA */}
-        <main className="main-content">
-          {activeTabKey === 'My Journey' ? (
+        <main className={`main-content ${activeTabKey === 'Temples' ? 'temples-page-main' : ''}`}>
+          {activeTabKey === 'Temples' ? (
+            <section className="temple-discovery" aria-label="Interactive Sacred Telangana">
+              <div className="temple-discovery-hero">
+                <span className="temple-discovery-kicker">THE SACRED CIRCUIT</span>
+                <h1>DISCOVER<br />SACRED TELANGANA</h1>
+                <p>23 sacred destinations. One journey through Telangana's spiritual heritage.</p>
+                <label className="temple-discovery-search" htmlFor="temple-search">
+                  <Landmark size={20} aria-hidden="true" />
+                  <input id="temple-search" type="search" placeholder="Search temples, deities, districts or places..." value={templeSearch} onChange={(event) => setTempleSearch(event.target.value)} />
+                </label>
+              </div>
+
+              <div className="temple-discovery-section-heading temple-discovery-map-heading">
+                <div><span className="temple-discovery-eyebrow">THE SACRED MAP</span><h2>Explore Telangana's temples and discover your next pilgrimage.</h2></div>
+                <span className="temple-discovery-count">23 TEMPLES / ONE JOURNEY</span>
+              </div>
+              <div className="temple-discovery-map-layout">
+                <div className="temple-discovery-map" aria-label="Stylized sacred temple map">
+                  <div className="temple-discovery-map-outline" aria-hidden="true"><span /><span /><span /><span /></div>
+                  <div className="temple-discovery-map-label">TELANGANA<br /><small>SACRED CONSTELLATION</small></div>
+                  <div className="temple-discovery-map-stars" aria-hidden="true" />
+                  <div className="temple-discovery-map-markers">
+                    {TEMPLES_LIST.map((temple) => <button type="button" key={temple.slug} className={`temple-discovery-marker ${selectedDiscoveryTemple.slug === temple.slug ? 'selected' : ''}`} style={CONSTELLATION_POSITIONS[temple.slug]} onClick={() => selectDiscoveryTemple(temple)} aria-label={`Explore ${temple.name}`}><span className="temple-discovery-marker-dot" /><span className="temple-discovery-marker-name">{temple.name}</span><span className="temple-discovery-marker-tooltip"><strong>{temple.name}</strong><small>Telangana</small><em>Explore Temple <span aria-hidden="true">→</span></em></span></button>)}
+                  </div>
+                  <div className="temple-discovery-map-legend"><span><i /> Selected destination</span><span><i /> 23 sacred records</span></div>
+                </div>
+                <aside className="temple-discovery-selected" aria-live="polite">
+                  <span className="temple-discovery-eyebrow">SELECTED DESTINATION</span>
+                  <span className="temple-discovery-selected-number">{String(TEMPLES_LIST.indexOf(selectedDiscoveryTemple) + 1).padStart(2, '0')} / 23</span>
+                  <h3>{selectedDiscoveryTemple.name}</h3>
+                  <p>{selectedDiscoveryTemple.full}</p>
+                  <span className="temple-discovery-selected-location">Telangana</span>
+                  {selectedDiscoveryTemple.slug === 'yadadri' && <span className="temple-discovery-selected-badge">✦ DRONE EXPERIENCE</span>}
+                  <div className="temple-discovery-selected-actions"><button type="button" className="temple-discovery-primary" onClick={() => openTempleExperience(selectedDiscoveryTemple)}>Explore Temple <span aria-hidden="true">→</span></button><button type="button" onClick={() => openPurpose('Darshan')}>Ask AI</button></div>
+                </aside>
+              </div>
+
+              <div className="temple-discovery-section-heading temple-discovery-purpose-heading"><div><span className="temple-discovery-eyebrow">PLAN YOUR DAY</span><h2>Explore by Purpose</h2></div></div>
+              <div className="temple-discovery-purpose-grid">{[['🙏', 'Darshan'], ['🪔', 'Rituals'], ['🗺️', 'Travel'], ['🏨', 'Accommodation'], ['🍽️', 'Restaurants'], ['🚑', 'Emergency']].map(([icon, label]) => <button type="button" className="temple-discovery-purpose" key={label} onClick={() => openPurpose(label)}><span>{icon}</span><strong>{label}</strong><small>Discover more <span aria-hidden="true">↗</span></small></button>)}</div>
+            </section>
+          ) : activeTabKey === 'My Journey' ? (
             <div className="chat-conversation">
               <h2>My Journey</h2>
               {user ? conversations.map((conversation) => (
@@ -398,10 +517,10 @@ export default function App() {
               {user && favorites.length > 0 && <><h3>Favorites</h3>{favorites.map((favorite) => <p key={favorite.id}>{favorite.item_type}: {favorite.item_key}</p>)}</>}
             </div>
           ) : !isChatMode ? (
-            <div className="center-hero">
+            <div className="center-hero home-hero">
               <div className="center-om">ॐ</div>
               <h1 className="hero-heading">{t.heading}</h1>
-              <p className="hero-subtext">{t.subtext}</p>
+              <p className="hero-subtext">Your AI companion for temples, darshan, travel, stays, rituals, and pilgrimage planning.</p>
 
               <button
                 className={`mic-circle-btn ${isListening ? 'listening' : ''}`}
@@ -410,25 +529,29 @@ export default function App() {
               >
                 <Mic size={28} />
               </button>
+              <span className="home-voice-label">Speak your pilgrimage question</span>
 
               <div className="quick-chips-row">
                 <button
                   className="quick-chip"
-                  onClick={() => handleSend(t.chipNearMe)}
+                  onClick={() => setActiveTabKey('Temples')}
                 >
-                  {t.chipNearMe}
+                  Explore Sacred Telangana
                 </button>
                 <button
                   className="quick-chip"
-                  onClick={() => handleSend(t.chipDarshan)}
+                  onClick={() => handleSend('Plan my pilgrimage')}
                 >
-                  {t.chipDarshan}
+                  Plan My Pilgrimage
                 </button>
                 <button
                   className="quick-chip"
-                  onClick={() => handleSend(t.chipRituals)}
+                  onClick={() => {
+                    setActiveTabKey('Darshan Booking')
+                    handleSend('Find darshan and rituals')
+                  }}
                 >
-                  {t.chipRituals}
+                  Find Darshan &amp; Rituals
                 </button>
               </div>
 
@@ -446,6 +569,13 @@ export default function App() {
                   <Send size={20} />
                 </button>
               </div>
+
+              <div className="home-plan-cta">
+                <button className="home-plan-button" type="button" onClick={() => handleSend('Plan my pilgrimage')}>
+                  <span>✦ Plan My Trip</span><span aria-hidden="true">→</span>
+                </button>
+              </div>
+              <p className="home-capability-strip">🛕 Temples · 🙏 Darshan · 🗺️ Travel · 🏨 Stay · 🪔 Rituals · 🧭 Trip Planning</p>
             </div>
           ) : (
             <div className="chat-conversation">
@@ -511,6 +641,32 @@ export default function App() {
           )}
         </main>
       </div>
+      {isYadadriSelected && (
+        <section className="yadadri-hero" aria-label="Yadadri temple hero">
+          {getTempleDroneVideo(selectedDiscoveryTemple) ? (
+            <iframe
+              className="yadadri-video"
+              src={getTempleDroneVideo(selectedDiscoveryTemple)}
+              title={`${selectedDiscoveryTemple.name} temple drone video`}
+              tabIndex={-1}
+              aria-hidden="true"
+              allow="autoplay"
+            />
+          ) : <div className="yadadri-fallback" aria-hidden="true" />}
+          <div className="yadadri-video-shield" aria-hidden="true" />
+          <div className="yadadri-overlay" />
+          <button className="yadadri-back" type="button" onClick={() => setIsYadadriSelected(false)}>← Back to Temples</button>
+          <div className="yadadri-content">
+            <span className="yadadri-label">{selectedDiscoveryTemple.name.toUpperCase()}</span>
+            <h1>{selectedDiscoveryTemple.full}</h1>
+            <p>Telangana</p>
+            <div className="yadadri-actions">
+              <button type="button">Explore Temple</button>
+              <button type="button">Ask AI</button>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   )
 }

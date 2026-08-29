@@ -24,7 +24,7 @@ public/              React frontend source and static assets, served by NestJS
 ## Prerequisites
 
 - Node.js 20 or later
-- A running FastAPI RAG service (default: `http://localhost:8000`)
+- A separately deployed RAG Agent (default: `http://localhost:8100`)
 - A Supabase project
 - A Google OAuth 2.0 web client
 
@@ -46,11 +46,10 @@ npm run dev
 In a second terminal, start the FastAPI worker:
 
 ```bash
-cd worker
 python -m venv .venv
 .venv\Scripts\activate
-pip install -r requirements.txt
-uvicorn main:app --reload --port 8000 --env-file ../.env
+pip install -r worker/requirements.txt
+uvicorn worker.main:app --reload --port 8000
 ```
 
 NestJS serves both the React app and API on `http://localhost:3000`; the worker runs on `http://localhost:8000`. If either URL changes, update `FRONTEND_URL`, `PUBLIC_API_URL`, `FASTAPI_URL`, and `RAG_AGENT_URL` as appropriate.
@@ -99,7 +98,13 @@ Content-Type: application/json
 { "query": "Darshan timings at Yadadri", "temple": "yadadri", "language": "en" }
 ```
 
-NestJS forwards the same payload to `FASTAPI_URL/api/chat` (the worker, default `http://localhost:8000/api/chat`). The worker then calls `RAG_AGENT_URL/api/chat` and returns its response. The RAG agent should return a JSON object containing at least `reply`.
+NestJS forwards the same payload to `FASTAPI_URL/chat` (the worker, default `http://localhost:8000/chat`). The worker then calls `RAG_AGENT_URL` plus `RAG_AGENT_CHAT_PATH` (default `/api/chat`) and returns a normalized response:
+
+```json
+{ "answer": "...", "sources": [], "language": "en" }
+```
+
+The RAG Agent may temporarily return either `answer` or its legacy `reply` field; the worker normalizes both. The worker has no browser clients, so CORS is intentionally not enabled.
 
 ## Yadadri temple video prototype
 

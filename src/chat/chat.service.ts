@@ -1,4 +1,4 @@
-import { Injectable, ServiceUnavailableException } from '@nestjs/common';
+import { BadGatewayException, GatewayTimeoutException, Injectable, ServiceUnavailableException } from '@nestjs/common';
 import axios from 'axios';
 import { SupabaseService } from '../database/supabase.service';
 
@@ -18,13 +18,20 @@ export class ChatService {
     }
     const { data: userMessage, error: userMessageError } = await this.supabase.db.from('messages').insert({ conversation_id: activeConversationId, role: 'user', content: payload.query }).select('id').single();
     if (userMessageError) throw userMessageError;
+    let data: { answer: string; sources: unknown[]; language: 'en' | 'te' | 'hi' };
     try {
-      const { data } = await axios.post(`${process.env.FASTAPI_URL || 'http://localhost:8000'}/api/chat`, payload, { timeout: 45_000 });
-      const { data: assistantMessage, error: assistantMessageError } = await this.supabase.db.from('messages').insert({ conversation_id: activeConversationId, role: 'assistant', content: data.reply, agent_used: data.agent_used || null, source_metadata: data.source_metadata || {} }).select('id').single();
-      if (assistantMessageError) throw assistantMessageError;
-      return { ...data, conversationId: activeConversationId, userMessageId: userMessage.id, assistantMessageId: assistantMessage.id };
-    } catch {
+      ({ data } = await axios.post(`${process.env.FASTAPI_URL || 'http://localhost:8000'}/chat`, payload, { timeout: 45_000 }));
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 502) {
+        throw new BadGatewayException('The PilgrimAI RAG service returned an invalid response.');
+      }
+      if (axios.isAxiosError(error) && error.response?.status === 504) {
+        throw new GatewayTimeoutException('The PilgrimAI RAG service timed out.');
+      }
       throw new ServiceUnavailableException('The PilgrimAI RAG service is unavailable.');
     }
+    const { data: assistantMessage, error: assistantMessageError } = await this.supabase.db.from('messages').insert({ conversation_id: activeConversationId, role: 'assistant', content: data.answer, agent_used: null, source_metadata: { sources: data.sources || [], language: data.language } }).select('id').single();
+    if (assistantMessageError) throw assistantMessageError;
+    return { ...data, conversationId: activeConversationId, userMessageId: userMessage.id, assistantMessageId: assistantMessage.id };
   }
 }

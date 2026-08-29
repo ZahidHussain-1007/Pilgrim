@@ -16,6 +16,16 @@ import {
 
 const API_BASE_URL = window.location.origin
 
+class ChatRequestError extends Error {}
+
+function chatErrorMessage(status) {
+  if (status === 401) return 'Please sign in to continue.'
+  if (status === 422) return 'Your message could not be processed. Please check it and try again.'
+  if (status === 502 || status === 503 || status === 504) return 'The PilgrimAI service is unavailable right now. Please try again shortly.'
+  if (status >= 400 && status < 500) return 'Your chat request could not be completed. Please try again.'
+  return 'The PilgrimAI backend encountered an error. Please try again later.'
+}
+
 const TEMPLE_DRONE_VIDEOS = {
   yadadri: 'TL1ikdUlD3M',
   jogulamba: 'jWT9wJk4wcg',
@@ -304,6 +314,7 @@ export default function App() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           query: text,
           temple: targetTemple,
@@ -313,7 +324,7 @@ export default function App() {
       })
 
       if (!response.ok) {
-        throw new Error(`Server status: ${response.status}`)
+        throw new ChatRequestError(chatErrorMessage(response.status))
       }
 
       const data = await response.json()
@@ -321,9 +332,10 @@ export default function App() {
       if (data.conversationId && !conversations.some((item) => item.id === data.conversationId)) {
         setConversations((prev) => [{ id: data.conversationId, title: text }, ...prev])
       }
-      setMessages((prev) => [...prev, { id: data.assistantMessageId, who: 'bot', text: data.reply }])
+      setMessages((prev) => [...prev, { id: data.assistantMessageId, who: 'bot', text: data.answer }])
     } catch (err) {
-      setMessages((prev) => [...prev, { who: 'bot', text: t.errorMsg }])
+      const message = err instanceof ChatRequestError ? err.message : t.errorMsg
+      setMessages((prev) => [...prev, { who: 'bot', text: message }])
     } finally {
       setIsLoading(false)
     }

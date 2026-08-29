@@ -1,7 +1,14 @@
 /node_modules
+.venv/
 dist
 .env
 .env.*
 public/app.js
 client_secret*.json
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/

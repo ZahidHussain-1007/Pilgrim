@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from pydantic import AnyHttpUrl, BaseModel
+from pydantic import AnyHttpUrl, BaseModel, Field, field_validator
 
 
 WORKER_DIRECTORY = Path(__file__).resolve().parents[1]
@@ -19,7 +19,14 @@ class Settings(BaseModel):
     app_environment: str = "development"
     rag_agent_url: AnyHttpUrl
     rag_agent_chat_path: str = "/api/chat"
-    rag_agent_timeout_seconds: float = 40.0
+    rag_agent_timeout_seconds: float = Field(default=40.0, gt=0)
+
+    @field_validator("rag_agent_chat_path")
+    @classmethod
+    def validate_rag_agent_chat_path(cls, value: str) -> str:
+        if not value.startswith("/"):
+            raise ValueError("RAG_AGENT_CHAT_PATH must start with '/'.")
+        return value
 
 @lru_cache
 def get_settings() -> Settings:

@@ -1,4 +1,5 @@
 import sys
+import pytest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -108,7 +109,8 @@ def test_longest_sorts_km(monkeypatch):
     assert "will not invent" in cheap["cost_note"].lower()
 
 
-def test_new_sentence_replaces_pending_origin(monkeypatch):
+@pytest.mark.anyio
+async def test_new_sentence_replaces_pending_origin(monkeypatch):
     from ask_service import ask
     import ask_service
 
@@ -134,9 +136,9 @@ def test_new_sentence_replaces_pending_origin(monkeypatch):
         }
 
     monkeypatch.setattr(ask_service, "plan_to_temple", fake_plan)
-    _first, session = ask("from hyderabad to yadadri", {})
+    _first, session = await ask("from hyderabad to yadadri", None, {})
     assert session.get("pending_travel_mode")
-    packed, session = ask("from narayanaguda to yadadri by bus", session)
+    packed, session = await ask("from narayanaguda to yadadri by bus", None, session)
     assert packed["status"] == "ok"
     assert "narayanaguda" in packed["answer"].lower()
     assert "from hyderabad." not in packed["answer"].lower()

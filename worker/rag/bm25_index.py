@@ -69,7 +69,4 @@ class BM25Store:
                     "score": float(score),
                 }
             )
-        return results
-
-
-store = BM25Store()
+        return results

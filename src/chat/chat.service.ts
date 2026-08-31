@@ -20,15 +20,25 @@ export class ChatService {
     if (userMessageError) throw userMessageError;
     let data: { answer: string; sources: unknown[]; language: 'en' | 'te' | 'hi' };
     try {
-      ({ data } = await axios.post(`${process.env.FASTAPI_URL || 'http://localhost:8000'}/chat`, payload, { timeout: 45_000 }));
+      const targetUrl = `${process.env.FASTAPI_URL || 'http://127.0.0.1:8000'}/chat`;
+      const requestPayload = { ...payload, session_id: activeConversationId };
+      
+      ({ data } = await axios.post(targetUrl, requestPayload, { timeout: 45_000 }));
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 502) {
-        throw new BadGatewayException('The PilgrimAI RAG service returned an invalid response.');
+      console.error('FASTAPI REQUEST FAILED:');
+      let debugInfo = String(error);
+      if (axios.isAxiosError(error)) {
+        console.error('Message:', error.message);
+        console.error('Code:', error.code);
+        console.error('Response Status:', error.response?.status);
+        console.error('Response Data:', error.response?.data);
+        debugInfo = `Axios Error: ${error.code} - ${error.message}. URL: ${error.config?.url}`;
+      } else {
+        console.error('Error:', error);
       }
-      if (axios.isAxiosError(error) && error.response?.status === 504) {
-        throw new GatewayTimeoutException('The PilgrimAI RAG service timed out.');
-      }
-      throw new ServiceUnavailableException('The PilgrimAI RAG service is unavailable.');
+      
+      const { InternalServerErrorException } = require('@nestjs/common');
+      throw new InternalServerErrorException(`Backend Integration Failure: ${debugInfo}`);
     }
     const { data: assistantMessage, error: assistantMessageError } = await this.supabase.db.from('messages').insert({ conversation_id: activeConversationId, role: 'assistant', content: data.answer, agent_used: null, source_metadata: { sources: data.sources || [], language: data.language } }).select('id').single();
     if (assistantMessageError) throw assistantMessageError;

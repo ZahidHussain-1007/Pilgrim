@@ -1,12 +1,5 @@
-import os
-
-from dotenv import load_dotenv
-
-load_dotenv()
-
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
-
+import asyncio
+from rag.config import settings
 
 def build_prompt(query, context):
     return f"""
@@ -33,35 +26,27 @@ Retrieved Context:
 Give a clear, concise answer. Use only names and numbers that appear in the context.
 """
 
-
-def generate_with_groq(prompt):
-    from groq import Groq
-
-    client = Groq(api_key=GROQ_API_KEY)
-    response = client.chat.completions.create(
-        model=GROQ_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.1,
-        max_tokens=800,
-    )
-    return response.choices[0].message.content
-
-
-def generate_answer(query, context):
+async def generate_answer(query: str, context: str, app_state) -> str:
     prompt = build_prompt(query, context)
 
-    if not GROQ_API_KEY:
+    if not app_state.groq:
         return (
             "GROQ_API_KEY is missing. Here is the retrieved information:\n\n"
             + context[:1200]
         )
 
     try:
-        print(f"  Groq: {GROQ_MODEL}", flush=True)
-        return generate_with_groq(prompt)
+        response = await app_state.groq.chat.completions.create(
+            model=settings.groq_model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.1,
+            max_tokens=800,
+            timeout=15.0
+        )
+        return response.choices[0].message.content
+    except asyncio.TimeoutError:
+        print("  Groq failed: TimeoutError", flush=True)
+        return "The language service timed out. Here is the retrieved information:\n\n" + context[:1200]
     except Exception as error:
         print(f"  Groq failed: {error}", flush=True)
-        return (
-            "The language service is busy. Here is the retrieved information:\n\n"
-            + context[:1200]
-        )
+        return "The language service is busy. Here is the retrieved information:\n\n" + context[:1200]

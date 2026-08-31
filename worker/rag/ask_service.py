@@ -118,7 +118,7 @@ def _pack(decision, results, answer):
     }
 
 
-def _run(decision, user_query):
+async def _run(decision, user_query, app_state):
     if not decision.get("should_retrieve"):
         return {
             "status": decision["status"],
@@ -128,10 +128,10 @@ def _run(decision, user_query):
             "answer": decision.get("message"),
             "sources": [],
         }
-    results = retrieve(decision, verbose=False)
+    results = await retrieve(decision, app_state, verbose=False)
     max_chunks = 8 if decision.get("intent") == "overview" else 5
     context = build_context(results, max_chunks=max_chunks)
-    answer = generate_answer(user_query, context)
+    answer = await generate_answer(user_query, context, app_state)
     return _pack(decision, results[:max_chunks], answer)
 
 
@@ -443,7 +443,7 @@ def _resolve_temple(query, session):
     return decision, session
 
 
-def ask(query: str, session=None):
+async def ask(query: str, app_state, session=None):
     session = dict(session or {})
     text = normalize(query)
 
@@ -473,7 +473,7 @@ def ask(query: str, session=None):
                     "sources": [],
                 }, session
             decision = router.route_with_temple(pending["canonical"], temple_id)
-            return _run(decision, pending["canonical"]), session
+            return await _run(decision, pending["canonical"], app_state), session
 
         session.pop("pending_clarify", None)
 
@@ -740,4 +740,4 @@ def ask(query: str, session=None):
             "sources": [],
         }, session
 
-    return _run(decision, query), session
+    return await _run(decision, query, app_state), session

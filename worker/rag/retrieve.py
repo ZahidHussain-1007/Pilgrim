@@ -1,12 +1,10 @@
-from test_reranker import search
-from bm25_index import store
-
+import asyncio
+from rag.searcher import search
 
 FUSION_QUERY = (
     "temple overview history location darshan timings "
     "facilities dress code"
 )
-
 
 def rrf_fuse(lists, k=60):
     scores = {}
@@ -25,7 +23,6 @@ def rrf_fuse(lists, k=60):
         for chunk_id, score in ranked
     ]
 
-
 def boost_sections(results, preferred):
     if not preferred or not results:
         return results
@@ -33,7 +30,6 @@ def boost_sections(results, preferred):
     first = [item for item in results if item["payload"].get("section") in preferred]
     rest = [item for item in results if item["payload"].get("section") not in preferred]
     return first + rest
-
 
 def unique_places(results, entity_type):
     if entity_type not in {"hotel", "restaurant"}:
@@ -56,8 +52,7 @@ def unique_places(results, entity_type):
         unique.append(item)
     return unique
 
-
-def retrieve(decision, slot_k=5, overview_k=8, verbose=False, use_reranker=False):
+async def retrieve(decision, app_state, slot_k=5, overview_k=8, verbose=False, use_reranker=False):
     if not decision.get("should_retrieve"):
         return []
 
@@ -76,20 +71,29 @@ def retrieve(decision, slot_k=5, overview_k=8, verbose=False, use_reranker=False
         query = queries[0]
         limit = slot_k
 
-    dense = search(
+    dense = await search(
         query,
+        app_state=app_state,
         temple_id=temple_id,
         entity_type=entity_type,
         verbose=verbose,
         use_reranker=use_reranker,
     )
-    lexical = store.search(
-        query,
-        temple_id=temple_id,
-        entity_type=entity_type,
-        limit=20,
-    )
-    fused = rrf_fuse([dense, lexical])
-    fused = boost_sections(fused, decision.get("preferred_sections") or [])
-    fused = unique_places(fused, entity_type)
-    return fused[:limit]
+    
+    def _bm25_search():
+        return app_state.bm25_store.search(
+            query,
+            temple_id=temple_id,
+            entity_type=entity_type,
+            limit=20,
+        )
+    
+    lexical = await asyncio.to_thread(_bm25_search)
+    
+    def _fuse():
+        fused = rrf_fuse([dense, lexical])
+        fused = boost_sections(fused, decision.get("preferred_sections") or [])
+        fused = unique_places(fused, entity_type)
+        return fused[:limit]
+        
+    return await asyncio.to_thread(_fuse)

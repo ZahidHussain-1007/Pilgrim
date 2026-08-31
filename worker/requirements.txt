@@ -1,4 +1,4 @@
-﻿accelerate==1.14.0
+accelerate==1.14.0
 aiohappyeyeballs==2.7.1
 aiohttp==3.14.3
 aiosignal==1.4.0
@@ -84,3 +84,5 @@ uvicorn[standard]>=0.30,<1
 websockets==16.1.1
 xxhash==4.0.0
 yarl==1.24.5
+groq==0.15.0
+rank-bm25==0.2.2

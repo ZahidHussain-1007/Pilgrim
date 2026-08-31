@@ -3,6 +3,8 @@
 dist
 .env
 .env.*
+!.env.example
+!worker/.env.example
 public/app.js
 client_secret*.json
 __pycache__/

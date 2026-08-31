@@ -60,11 +60,17 @@ export class AuthService {
   }
 
   async getProfile(googleId: string) {
+    const safeGoogleId = googleId ? `${googleId.substring(0, 4)}***${googleId.substring(googleId.length - 4)}` : 'missing';
+    this.logger.log(`getProfile called. googleId present: ${!!googleId}, safeId: ${safeGoogleId}`);
+
     const { data, error } = await this.supabase.db
       .from('profiles')
       .select('id, google_id, email, full_name, avatar_url, preferred_language, created_at, updated_at')
       .eq('google_id', googleId)
       .single();
+
+    this.logger.log(`getProfile Supabase query finished. Has data: ${!!data}, Error: ${error?.message || 'none'}`);
+
     if (error) throw error;
     return data;
   }

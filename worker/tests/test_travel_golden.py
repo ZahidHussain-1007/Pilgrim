@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import sys
+import pytest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -206,12 +207,13 @@ def test_boarding_card_shape():
     assert "take train" not in low
 
 
-def test_ask_needs_origin(monkeypatch):
+@pytest.mark.anyio
+async def test_ask_needs_origin(monkeypatch):
     ask, _ = _load_ask()
     import ask_service
 
     monkeypatch.setattr(ask_service, "plan_to_temple", _fake_plan)
-    packed, session = ask("how to reach yadadri", {})
+    packed, session = await ask("how to reach yadadri", None, {})
     assert packed["status"] == "needs_origin"
     assert packed["temple_id"] == "T0001"
     assert packed["entity"] == "travel"
@@ -219,12 +221,14 @@ def test_ask_needs_origin(monkeypatch):
     assert session.get("pending_travel_origin")
 
 
-def test_ask_needs_mode_when_source_present(monkeypatch):
+
+@pytest.mark.anyio
+async def test_ask_needs_mode_when_source_present(monkeypatch):
     ask, _ = _load_ask()
     import ask_service
 
     monkeypatch.setattr(ask_service, "plan_to_temple", _fake_plan)
-    packed, session = ask("from secunderabad to yadadri", {})
+    packed, session = await ask("from secunderabad to yadadri", None, {})
     assert packed["status"] == "needs_mode"
     assert packed["temple_id"] == "T0001"
     assert packed["entity"] == "travel"
@@ -232,12 +236,14 @@ def test_ask_needs_mode_when_source_present(monkeypatch):
     assert session.get("pending_travel_mode")
 
 
-def test_ask_complete_bus_sentence_does_not_reask(monkeypatch):
+
+@pytest.mark.anyio
+async def test_ask_complete_bus_sentence_does_not_reask(monkeypatch):
     ask, _ = _load_ask()
     import ask_service
 
     monkeypatch.setattr(ask_service, "plan_to_temple", _fake_plan)
-    packed, session = ask("from narayanaguda to yadadri by bus", {})
+    packed, session = await ask("from narayanaguda to yadadri by bus", None, {})
     assert packed["status"] == "ok"
     assert packed["temple_id"] == "T0001"
     assert packed["entity"] == "travel"
@@ -249,12 +255,14 @@ def test_ask_complete_bus_sentence_does_not_reask(monkeypatch):
     assert session.get("last_travel", {}).get("temple_id") == "T0001"
 
 
-def test_ask_train_does_not_invent_number(monkeypatch):
+
+@pytest.mark.anyio
+async def test_ask_train_does_not_invent_number(monkeypatch):
     ask, _ = _load_ask()
     import ask_service
 
     monkeypatch.setattr(ask_service, "plan_to_temple", _fake_plan)
-    packed, _session = ask("from secunderabad to yadadri by train", {})
+    packed, _session = await ask("from secunderabad to yadadri by train", None, {})
     assert packed["status"] == "ok"
     assert packed["temple_id"] == "T0001"
     low = packed["answer"].lower()
@@ -264,37 +272,45 @@ def test_ask_train_does_not_invent_number(monkeypatch):
     assert "take train" not in low
 
 
-def test_ask_sanghi_car_locks_t0010(monkeypatch):
+
+@pytest.mark.anyio
+async def test_ask_sanghi_car_locks_t0010(monkeypatch):
     ask, _ = _load_ask()
     import ask_service
 
     monkeypatch.setattr(ask_service, "plan_to_temple", _fake_plan)
-    packed, session = ask("from mehdipatnam to sanghi by car", {})
+    packed, session = await ask("from mehdipatnam to sanghi by car", None, {})
     assert packed["status"] == "ok"
     assert packed["temple_id"] == "T0010"
     assert packed["entity"] == "travel"
     assert session.get("last_travel", {}).get("mode") == "drive"
 
 
-def test_ask_how_to_reach_without_temple():
+
+@pytest.mark.anyio
+async def test_ask_how_to_reach_without_temple():
     ask, _ = _load_ask()
-    packed, _session = ask("how to reach", {})
+    packed, _session = await ask("how to reach", None, {})
     assert packed["status"] == "needs_temple"
     assert packed["entity"] == "travel"
 
 
-def test_ask_dakshina_kasi_route_is_ambiguous():
+
+@pytest.mark.anyio
+async def test_ask_dakshina_kasi_route_is_ambiguous():
     ask, _ = _load_ask()
-    packed, _session = ask("how to reach dakshina kasi", {})
+    packed, _session = await ask("how to reach dakshina kasi", None, {})
     assert packed["status"] == "ambiguous"
     assert packed["temple_id"] is None
 
 
-def test_food_on_the_way_uses_catalog_not_groq(monkeypatch):
+
+@pytest.mark.anyio
+async def test_food_on_the_way_uses_catalog_not_groq(monkeypatch):
     ask, _ = _load_ask()
     import ask_service
 
-    def boom(*_a, **_k):
+    async def boom(*_a, **_k):
         raise AssertionError("Groq / retrieve must not run for food on the way")
 
     monkeypatch.setattr(ask_service, "generate_answer", boom)
@@ -310,7 +326,7 @@ def test_food_on_the_way_uses_catalog_not_groq(monkeypatch):
             "mode": "transit",
         }
     }
-    packed, _session = ask("any food on the way?", session)
+    packed, _session = await ask("any food on the way?", None, session)
     assert packed["status"] == "ok"
     assert packed["entity"] == "travel"
     assert packed["intent"] == "route_pins"

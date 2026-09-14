@@ -40,10 +40,24 @@ async def generate_answer(query: str, context: str, app_state) -> str:
             model=settings.groq_model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.1,
-            max_tokens=800,
-            timeout=15.0
+            max_tokens=4096,
+            timeout=40.0
         )
-        return response.choices[0].message.content
+        
+        choice = response.choices[0]
+        content = choice.message.content
+        finish_reason = choice.finish_reason
+        
+        usage = getattr(response, "usage", None)
+        total_tokens = getattr(usage, "total_tokens", "unknown") if usage else "unknown"
+        
+        print(f"  Groq info: model={settings.groq_model}, finish_reason={finish_reason}, tokens={total_tokens}, content_empty={not content}", flush=True)
+        
+        if not content:
+            print(f"  Groq failed: The model produced no final content. Finish reason: {finish_reason}", flush=True)
+            return "The language service was unable to finalize an answer. Please try again or rephrase your question."
+            
+        return content
     except asyncio.TimeoutError:
         print("  Groq failed: TimeoutError", flush=True)
         return "The language service timed out. Here is the retrieved information:\n\n" + context[:1200]

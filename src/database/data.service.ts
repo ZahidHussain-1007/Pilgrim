@@ -79,4 +79,13 @@ export class DataService {
     if (error || !data) throw new NotFoundException('Conversation not found.');
     return data;
   }
+  async getTemple(slug: string) {
+    const { data, error } = await this.supabase.db
+      .from('temples')
+      .select('slug, name, full_name, background_video_url')
+      .eq('slug', slug)
+      .single();
+    if (error || !data) throw new NotFoundException('Temple not found.');
+    return data;
+  }
 }

@@ -30,6 +30,8 @@ export class DataController {
     return session;
   }
 
+  @Get('temples/:slug') getTemple(@Param('slug') slug: string) { return this.data.getTemple(slug); }
+
   @Get('profile') profile(@Req() request: { cookies?: Record<string, string> }) { return this.data.getProfile(this.session(request)); }
   @Get('conversations') conversations(@Req() request: { cookies?: Record<string, string> }) { return this.data.listConversations(this.session(request)); }
   @Post('conversations') createConversation(@Req() request: { cookies?: Record<string, string> }, @Body() body: ConversationDto) { return this.data.createConversation(this.session(request), body); }

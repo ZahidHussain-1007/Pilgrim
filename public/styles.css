@@ -57,8 +57,8 @@ button {
 }
 
 .immersive-app .top-navbar {
-  background-color: transparent;
-  border-bottom-color: transparent;
+  background-color: var(--bg-main);
+  border-bottom-color: rgba(214, 168, 105, 0.2);
 }
 
 .nav-brand {
@@ -333,26 +333,67 @@ button {
 }
 
 .immersive-temple-chat .immersive-chat-main {
-  width: 100%;
+  flex: 0 0 30%;
+  width: 30%;
   margin: 0;
-  padding: 20px 40px 40px;
-  background: transparent;
-  border: 0;
+  padding: 18px;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
   box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
 }
 
-.immersive-temple-chat .temple-video-wash {
+.temple-video-panel {
+  position: relative;
+  flex: 0 0 70%;
+  width: 70%;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+  background: #000;
+  container-type: size;
+}
+
+.temple-video-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
   background: transparent;
+  pointer-events: auto;
+}
+
+.temple-panel-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 177.78vh;
+  min-width: 100%;
+  height: 100vh;
+  min-height: 100%;
+  display: block;
+  border: 0;
+  outline: none;
+  background: #000;
+  object-fit: cover;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(1.42);
+}
+
+@supports (width: 100cqw) {
+  .temple-panel-video {
+    width: max(100cqw, calc(100cqh * 16 / 9));
+    height: max(100cqh, calc(100cqw * 9 / 16));
+  }
 }
 
 .immersive-temple-chat .chat-conversation {
   position: relative;
-  z-index: 10;
-  width: min(680px, 65vw);
-  max-width: 680px;
-  height: min(72vh, 760px);
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  padding: 0;
 }
 
 .video-workspace .sidebar {
@@ -543,6 +584,10 @@ button {
   background: transparent;
   font-size: 15px;
   color: #2f241c;
+  resize: none;
+  font-family: inherit;
+  line-height: 1.5;
+  padding: 10px 0;
 }
 
 .chat-input::placeholder {
@@ -691,6 +736,61 @@ button {
   font-weight: 600;
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.95), 0 -1px 2px rgba(255, 255, 255, 0.85), 1px 0 2px rgba(255, 255, 255, 0.75), -1px 0 2px rgba(255, 255, 255, 0.75);
 }
+
+/* The temple experience uses a dedicated IDE-like chat rail, never an overlay. */
+.immersive-temple-chat .message-stream {
+  padding: 6px 4px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(43, 29, 18, 0.24) transparent;
+}
+
+.immersive-temple-chat .message-stream::-webkit-scrollbar { display: block; width: 6px; }
+.immersive-temple-chat .message-stream::-webkit-scrollbar-thumb { border-radius: 6px; background: rgba(43, 29, 18, 0.24); }
+
+.immersive-temple-chat .chat-bubble,
+.immersive-temple-chat .chat-bubble.bot,
+.immersive-temple-chat .chat-bubble.user {
+  max-width: 92%;
+  border: 1px solid rgba(43, 29, 18, 0.12);
+  border-radius: 8px;
+  color: #1A1A1A;
+  font-weight: 600;
+  text-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+.immersive-temple-chat .chat-bubble.bot { background: rgba(255, 255, 255, 0.72); }
+.immersive-temple-chat .chat-bubble.user { background: rgba(245, 220, 177, 0.74); }
+
+.immersive-temple-chat .input-shell,
+.immersive-temple-chat .quick-chip {
+  border-color: rgba(43, 29, 18, 0.16);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+.immersive-temple-chat .chat-input,
+.immersive-temple-chat .quick-chip,
+.immersive-temple-chat .listen-btn,
+.immersive-temple-chat .feedback-actions button,
+.immersive-temple-chat .loading-bubble {
+  color: #1A1A1A !important;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.immersive-temple-chat .chat-input::placeholder {
+  color: rgba(26, 26, 26, 0.70);
+  font-weight: 500;
+  text-shadow: none;
+}
+
+.immersive-temple-chat .send-btn { color: var(--accent-saffron); text-shadow: none; }
+.immersive-temple-chat .quick-chip { margin-top: 10px; }
 
 .listen-btn {
   display: flex;
@@ -916,6 +1016,9 @@ button {
 }
 
 @media (max-width: 1100px) {
+  .immersive-temple-chat { flex-direction: row; }
+  .immersive-temple-chat .temple-video-panel { flex-basis: 60%; width: 60%; }
+  .immersive-temple-chat .immersive-chat-main { flex-basis: 40%; width: 40%; padding: 14px; }
   .temple-discovery-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .temple-discovery-purpose-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .temple-discovery-map-layout { grid-template-columns: 1fr; }
@@ -923,6 +1026,21 @@ button {
 }
 
 @media (max-width: 700px) {
+  .immersive-temple-chat { flex-direction: column; }
+  .immersive-temple-chat .temple-video-panel {
+    flex: 0 0 42%;
+    width: 100%;
+    min-height: 0;
+  }
+  .immersive-temple-chat .immersive-chat-main {
+    flex: 1 1 58%;
+    width: 100%;
+    min-height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    border-left: 0;
+    padding: 12px;
+  }
+  .immersive-temple-chat .chat-bubble { max-width: 94%; padding: 12px 14px; }
   .temple-discovery { padding-top: 0; }
   .temple-discovery-hero { margin-bottom: 32px; border-radius: 16px; padding: 34px 24px 28px; }
   .temple-discovery-hero h1 { font-size: 36px; }

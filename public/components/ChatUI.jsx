@@ -58,14 +58,19 @@ export default function ChatUI({
       </div>
 
       <div className="input-shell chat-input-shell">
-        <input
-          type="text"
+        <textarea
           className="chat-input"
           placeholder={t.followUpPlaceholder}
           value={query}
           disabled={isLoading}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              handleSend()
+            }
+          }}
+          rows={1}
         />
         <button className="send-btn" onClick={() => handleSend()} disabled={isLoading}>
           <Send size={20} />

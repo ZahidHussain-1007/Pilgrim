@@ -147,6 +147,7 @@ export default function App() {
     return () => controller.abort()
   }, [selectedDiscoveryTemple?.slug, selectedTemple])
   const threadEndRef = useRef(null)
+  const plannerSessionRef = useRef(0)
 
   const routeActions = { setActiveTabKey, setSelectedDiscoveryTemple, setIsYadadriSelected }
 
@@ -266,10 +267,15 @@ export default function App() {
   }
 
   function beginPilgrimagePlanning() {
+    plannerSessionRef.current += 1
     setConversationId(null)
     setSelectedTemple(null)
     setIsYadadriSelected(false)
     setQuery('')
+    setIsLoading(false)
+    setIsListening(false)
+    setTempleSearch('')
+    setSelectedDiscoveryTemple(TEMPLES_LIST[0])
     setMessages([{
       who: 'bot',
       text: 'Sure! Which temple would you like to visit? Please tell me your starting city, number of days, travel mode, and travel dates if you have them.'
@@ -289,9 +295,11 @@ export default function App() {
     setMessages((prev) => [...prev, { who: 'user', text }])
     setQuery('')
     setIsLoading(true)
+    const requestSession = plannerSessionRef.current
 
     try {
       const data = await sendChatMessage({ text, targetTemple, lang, conversationId, baseUrl: API_BASE_URL })
+      if (requestSession !== plannerSessionRef.current) return
 
       if (data.conversationId) setConversationId(data.conversationId)
       if (data.conversationId && !conversations.some((item) => item.id === data.conversationId)) {
@@ -299,10 +307,11 @@ export default function App() {
       }
       setMessages((prev) => [...prev, { id: data.assistantMessageId, who: 'bot', text: data.answer }])
     } catch (err) {
+      if (requestSession !== plannerSessionRef.current) return
       const message = err instanceof ChatRequestError ? err.message : t.errorMsg
       setMessages((prev) => [...prev, { who: 'bot', text: message }])
     } finally {
-      setIsLoading(false)
+      if (requestSession === plannerSessionRef.current) setIsLoading(false)
     }
   }
 
@@ -353,6 +362,9 @@ export default function App() {
   const immersiveTempleChat = Boolean(
     selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples' && isChatMode
   )
+  const templeVideoActive = Boolean(
+    selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples'
+  )
 
 
   return (
@@ -361,8 +373,22 @@ export default function App() {
       <TopNavbar user={user} t={t} signInWithGoogle={signInWithGoogle} signOut={signOut} handleTabChange={handleTabChange} startNewConversation={startNewConversation} />
 
       {/* 2. WORKSPACE */}
-      <div className={`workspace ${selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples' ? 'video-workspace' : ''} ${immersiveTempleChat ? 'immersive-temple-chat' : ''}`} style={{ position: 'relative' }}>
-        {selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples' && (
+      <div className={`workspace ${templeVideoActive ? 'video-workspace' : ''} ${immersiveTempleChat ? 'immersive-temple-chat' : ''}`} style={{ position: 'relative' }}>
+        {immersiveTempleChat && (
+          <section className="temple-video-panel" aria-label="Temple video">
+            <iframe
+              className="temple-panel-video"
+              src={videoUrls[selectedTemple]}
+              title={`${selectedTemple} temple video`}
+              tabIndex={-1}
+              aria-hidden="true"
+              allow="autoplay; encrypted-media"
+              allowFullScreen={false}
+            />
+            <div className="temple-video-shield" aria-hidden="true" />
+          </section>
+        )}
+        {templeVideoActive && !immersiveTempleChat && (
           <div className="temple-video-layer">
             <iframe
               className="yadadri-video"
@@ -381,7 +407,7 @@ export default function App() {
             activeTabKey={activeTabKey}
             lang={lang}
             t={t}
-            startNewConversation={startNewConversation}
+            beginPilgrimagePlanning={beginPilgrimagePlanning}
             handleTabChange={handleTabChange}
             setIsYadadriSelected={setIsYadadriSelected}
             handleSend={handleSend}
@@ -391,8 +417,8 @@ export default function App() {
 
         {/* MAIN CONTENT AREA */}
         <main 
-          className={`main-content ${activeTabKey === 'Temples' ? 'temples-page-main' : ''} ${selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples' ? 'video-main' : ''} ${immersiveTempleChat ? 'immersive-chat-main' : ''}`}
-          style={{ position: 'relative', zIndex: 2, backgroundColor: (selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples') ? 'transparent' : undefined }}
+          className={`main-content ${activeTabKey === 'Temples' ? 'temples-page-main' : ''} ${templeVideoActive ? 'video-main' : ''} ${immersiveTempleChat ? 'immersive-chat-main' : ''}`}
+          style={{ position: 'relative', zIndex: 2, backgroundColor: templeVideoActive && !immersiveTempleChat ? 'transparent' : undefined }}
         >
           {activeTabKey === 'Temples' ? (
             <TempleDiscovery

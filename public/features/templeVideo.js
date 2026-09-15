@@ -41,7 +41,9 @@ export function templeBackgroundVideoId(value) {
 
 export function buildYouTubeBackgroundUrl(videoId) {
   if (!videoId) return null
-  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&loop=1&playlist=${videoId}&playsinline=1&rel=0&modestbranding=1&autohide=1&showinfo=0&iv_load_policy=3&cc_load_policy=0`
+  const origin = typeof window !== 'undefined' && window.location ? window.location.origin : ''
+  const originParam = origin ? `&origin=${encodeURIComponent(origin)}` : ''
+  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&loop=1&playlist=${videoId}&playsinline=1&rel=0&modestbranding=1&autohide=1&showinfo=0&iv_load_policy=3&cc_load_policy=0&enablejsapi=1${originParam}`
 }
 
 export function convertYouTubeEmbed(url) {
@@ -49,21 +51,23 @@ export function convertYouTubeEmbed(url) {
   let videoId = null
   try {
     const parsed = new URL(url)
-    if (parsed.hostname === 'youtube.com' || parsed.hostname === 'www.youtube.com') {
+    const host = parsed.hostname.replace(/^www\./, '')
+    if (host === 'youtube.com' || host === 'm.youtube.com' || host === 'youtube-nocookie.com') {
       if (parsed.pathname === '/watch') {
         videoId = parsed.searchParams.get('v')
       } else if (parsed.pathname.startsWith('/embed/')) {
         videoId = parsed.pathname.split('/embed/')[1]
+      } else if (parsed.pathname.startsWith('/shorts/')) {
+        videoId = parsed.pathname.split('/shorts/')[1]
       }
-    } else if (parsed.hostname === 'youtu.be') {
+    } else if (host === 'youtu.be') {
       videoId = parsed.pathname.slice(1)
     }
-  } catch (e) {
+  } catch {
     return null
   }
   if (!videoId) return null
-  videoId = videoId.split('?')[0]
-  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&disablekb=1&fs=0&loop=1&playlist=${videoId}&playsinline=1&rel=0&modestbranding=1&autohide=1&showinfo=0&iv_load_policy=3&cc_load_policy=0`
+  return buildYouTubeBackgroundUrl(videoId.split('?')[0].split('&')[0])
 }
 
 export async function fetchTempleVideo(slug, baseUrl, signal) {

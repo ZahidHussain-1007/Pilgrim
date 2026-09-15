@@ -8,7 +8,8 @@ export default function TempleDiscovery({
   selectedDiscoveryTemple,
   selectDiscoveryTemple,
   openTempleExperience,
-  openPurpose
+  openPurpose,
+  onAskAI
 }) {
   return (
     <section className="temple-discovery" aria-label="Interactive Sacred Telangana">
@@ -43,7 +44,7 @@ export default function TempleDiscovery({
           <p>{selectedDiscoveryTemple.full}</p>
           <span className="temple-discovery-selected-location">Telangana</span>
           {selectedDiscoveryTemple.slug === 'yadadri' && <span className="temple-discovery-selected-badge">✦ DRONE EXPERIENCE</span>}
-          <div className="temple-discovery-selected-actions"><button type="button" className="temple-discovery-primary" onClick={() => openTempleExperience(selectedDiscoveryTemple)}>Explore Temple <span aria-hidden="true">→</span></button><button type="button" onClick={() => openPurpose('Darshan')}>Ask AI</button></div>
+          <div className="temple-discovery-selected-actions"><button type="button" className="temple-discovery-primary" onClick={() => openTempleExperience(selectedDiscoveryTemple)}>Explore Temple <span aria-hidden="true">→</span></button><button type="button" onClick={() => onAskAI ? onAskAI(selectedDiscoveryTemple) : openPurpose('Darshan')}>Ask AI</button></div>
         </aside>
       </div>
 

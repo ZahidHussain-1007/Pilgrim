@@ -2,7 +2,10 @@ import React, { useEffect, useRef, useState } from 'react'
 import { 
   ROUTE_TO_TAB, 
   parsePathAndApplyState as routingParsePath,
-  handleTabChange as routingHandleTabChange
+  handleTabChange as routingHandleTabChange,
+  navigateToTemple,
+  navigateToTempleConversation,
+  navigateToConversation
 } from './features/routing.js'
 import { resolveTempleVideo } from './features/templeVideo.js'
 import { TEMPLES_LIST } from './features/temples.js'
@@ -109,22 +112,55 @@ const UI_TRANSLATIONS = {
 
 export default function App() {
   const [activeTabKey, setActiveTabKey] = useState(() => {
-    if (window.location.pathname.startsWith('/temples/')) return 'Temples'
-    return ROUTE_TO_TAB[window.location.pathname] || 'Home'
+    const path = window.location.pathname
+    if (path.startsWith('/temples/')) return 'Temples'
+    if (path.startsWith('/c/')) return 'Home'
+    return ROUTE_TO_TAB[path] || 'Home'
   })
   const [lang, setLang] = useState('EN')
   const [query, setQuery] = useState('')
-  const [selectedTemple, setSelectedTemple] = useState(null)
+  const [selectedTemple, setSelectedTemple] = useState(() => {
+    const path = window.location.pathname
+    if (path.startsWith('/c/')) {
+      const param = path.slice(3).replace(/\/$/, '')
+      const temple = TEMPLES_LIST.find((t) => t.slug === param)
+      if (temple) return temple.slug
+    }
+    return null
+  })
   const [messages, setMessages] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [isListening, setIsListening] = useState(false)
   const [user, setUser] = useState(null)
-  const [conversationId, setConversationId] = useState(null)
+  const [conversationId, setConversationId] = useState(() => {
+    const path = window.location.pathname
+    if (path.startsWith('/c/')) {
+      const param = path.slice(3).replace(/\/$/, '')
+      const temple = TEMPLES_LIST.find((t) => t.slug === param)
+      if (!temple) return param
+    }
+    return null
+  })
   const [conversations, setConversations] = useState([])
   const [favorites, setFavorites] = useState([])
   const [templeSearch, setTempleSearch] = useState('')
-  const [selectedDiscoveryTemple, setSelectedDiscoveryTemple] = useState(TEMPLES_LIST[0])
-  const [isYadadriSelected, setIsYadadriSelected] = useState(false)
+  const [selectedDiscoveryTemple, setSelectedDiscoveryTemple] = useState(() => {
+    const path = window.location.pathname
+    if (path.startsWith('/temples/')) {
+      const slug = path.slice(9).replace(/\/$/, '')
+      const temple = TEMPLES_LIST.find((t) => t.slug === slug)
+      if (temple) return temple
+    }
+    if (path.startsWith('/c/')) {
+      const param = path.slice(3).replace(/\/$/, '')
+      const temple = TEMPLES_LIST.find((t) => t.slug === param)
+      if (temple) return temple
+    }
+    return TEMPLES_LIST[0]
+  })
+  const [isYadadriSelected, setIsYadadriSelected] = useState(() => {
+    return window.location.pathname.startsWith('/temples/')
+  })
   const fetchedSlugs = useRef(new Set())
   const [videoUrls, setVideoUrls] = useState({})
 
@@ -149,7 +185,27 @@ export default function App() {
   const threadEndRef = useRef(null)
   const plannerSessionRef = useRef(0)
 
-  const routeActions = { setActiveTabKey, setSelectedDiscoveryTemple, setIsYadadriSelected }
+  async function loadConversation(id) {
+    const history = await fetchConversationMessages(id, API_BASE_URL)
+    setConversationId(id)
+    if (history && history.length > 0) {
+      setMessages(history.map((message) => ({ id: message.id, who: message.role === 'assistant' ? 'bot' : 'user', text: message.content })))
+    }
+    if (window.location.pathname !== `/c/${id}`) {
+      window.history.pushState({ key: 'Conversation', conversationId: id }, '', `/c/${id}`)
+    }
+    setActiveTabKey('Home')
+    setIsYadadriSelected(false)
+  }
+
+  const routeActions = { 
+    setActiveTabKey, 
+    setSelectedDiscoveryTemple, 
+    setIsYadadriSelected, 
+    setSelectedTemple, 
+    setConversationId, 
+    loadConversation 
+  }
 
   function parsePathAndApplyState(path) {
     return routingParsePath(path, TEMPLES_LIST, routeActions)
@@ -179,7 +235,9 @@ export default function App() {
   }, [])
 
   const t = UI_TRANSLATIONS[lang]
-  const isChatMode = messages.length > 0
+  const isConversationRoute = window.location.pathname.startsWith('/c/')
+  const isChatMode = messages.length > 0 || isConversationRoute
+
   function openTempleExperience(temple) {
     const route = `/temples/${temple.slug}`
     if (window.location.pathname !== route) {
@@ -191,6 +249,25 @@ export default function App() {
   function selectDiscoveryTemple(temple) {
     setSelectedDiscoveryTemple(temple)
     setSelectedTemple(temple.slug)
+    openTempleExperience(temple)
+  }
+
+  function handleAskAI(temple) {
+    const target = typeof temple === 'string' ? temple : temple?.slug
+    if (!target) return
+    const matched = TEMPLES_LIST.find((t) => t.slug === target)
+    if (matched) {
+      setSelectedTemple(matched.slug)
+      setSelectedDiscoveryTemple(matched)
+    } else {
+      setSelectedTemple(target)
+    }
+    setIsYadadriSelected(false)
+    setActiveTabKey('Home')
+    const route = `/c/${target}`
+    if (window.location.pathname !== route) {
+      window.history.pushState({ key: 'Conversation', templeSlug: target }, '', route)
+    }
   }
 
   function openPurpose(key) {
@@ -227,14 +304,6 @@ export default function App() {
       .catch(() => {})
   }, [])
 
-  async function loadConversation(id) {
-    const history = await fetchConversationMessages(id, API_BASE_URL)
-    if (!history) return
-    setConversationId(id)
-    setMessages(history.map((message) => ({ id: message.id, who: message.role === 'assistant' ? 'bot' : 'user', text: message.content })))
-    handleTabChange('Home')
-  }
-
   async function submitFeedback(messageId, rating) {
     await chatSubmitFeedback(messageId, rating, API_BASE_URL)
   }
@@ -262,8 +331,13 @@ export default function App() {
 
   function startNewConversation() {
     setConversationId(null)
+    setSelectedTemple(null)
+    setIsYadadriSelected(false)
     setMessages([])
-    handleTabChange('Home')
+    if (window.location.pathname !== '/') {
+      window.history.pushState({ key: 'Home' }, '', '/')
+    }
+    setActiveTabKey('Home')
   }
 
   function beginPilgrimagePlanning() {
@@ -280,7 +354,10 @@ export default function App() {
       who: 'bot',
       text: 'Sure! Which temple would you like to visit? Please tell me your starting city, number of days, travel mode, and travel dates if you have them.'
     }])
-    handleTabChange('Home')
+    if (window.location.pathname !== '/') {
+      window.history.pushState({ key: 'Home' }, '', '/')
+    }
+    setActiveTabKey('Home')
   }
 
   async function handleSend(textOverride) {
@@ -301,13 +378,32 @@ export default function App() {
       const data = await sendChatMessage({ text, targetTemple, lang, conversationId, baseUrl: API_BASE_URL })
       if (requestSession !== plannerSessionRef.current) return
 
-      if (data.conversationId) setConversationId(data.conversationId)
-      if (data.conversationId && !conversations.some((item) => item.id === data.conversationId)) {
-        setConversations((prev) => [{ id: data.conversationId, title: text }, ...prev])
+      const activeConvId = data.conversationId || (window.crypto?.randomUUID ? window.crypto.randomUUID().slice(0, 8) : Math.random().toString(36).substring(2, 10))
+
+      if (!conversationId) {
+        setConversationId(activeConvId)
+        if (!conversations.some((item) => item.id === activeConvId)) {
+          setConversations((prev) => [{ id: activeConvId, title: text }, ...prev])
+        }
+        const currentPath = window.location.pathname
+        const isTempleRoute = currentPath.startsWith('/c/') && TEMPLES_LIST.some((t) => t.slug === currentPath.slice(3).replace(/\/$/, ''))
+        if (!isTempleRoute && currentPath !== `/c/${activeConvId}`) {
+          window.history.pushState({ key: 'Conversation', conversationId: activeConvId }, '', `/c/${activeConvId}`)
+        }
       }
+
       setMessages((prev) => [...prev, { id: data.assistantMessageId, who: 'bot', text: data.answer }])
     } catch (err) {
       if (requestSession !== plannerSessionRef.current) return
+      if (!conversationId) {
+        const fallbackConvId = window.crypto?.randomUUID ? window.crypto.randomUUID().slice(0, 8) : Math.random().toString(36).substring(2, 10)
+        setConversationId(fallbackConvId)
+        const currentPath = window.location.pathname
+        const isTempleRoute = currentPath.startsWith('/c/') && TEMPLES_LIST.some((t) => t.slug === currentPath.slice(3).replace(/\/$/, ''))
+        if (!isTempleRoute && currentPath !== `/c/${fallbackConvId}`) {
+          window.history.pushState({ key: 'Conversation', conversationId: fallbackConvId }, '', `/c/${fallbackConvId}`)
+        }
+      }
       const message = err instanceof ChatRequestError ? err.message : t.errorMsg
       setMessages((prev) => [...prev, { who: 'bot', text: message }])
     } finally {
@@ -428,6 +524,7 @@ export default function App() {
               selectDiscoveryTemple={selectDiscoveryTemple}
               openTempleExperience={openTempleExperience}
               openPurpose={openPurpose}
+              onAskAI={handleAskAI}
             />
           ) : activeTabKey === 'My Journey' ? (
             <MyJourney
@@ -474,6 +571,7 @@ export default function App() {
           videoUrl={videoUrls[selectedDiscoveryTemple?.slug]}
           setSelectedTemple={setSelectedTemple}
           handleTabChange={handleTabChange}
+          onAskAI={handleAskAI}
           onBackToTemples={() => {
             if (window.history.state && window.history.state.slug) {
               window.history.back()

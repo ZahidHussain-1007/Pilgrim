@@ -5,7 +5,8 @@ export default function TempleExperienceHero({
   videoUrl,
   setSelectedTemple,
   handleTabChange,
-  onBackToTemples
+  onBackToTemples,
+  onAskAI
 }) {
   return (
     <section className="yadadri-hero" aria-label="Yadadri temple hero">
@@ -30,8 +31,12 @@ export default function TempleExperienceHero({
         <div className="yadadri-actions">
           <button type="button">Explore Temple</button>
           <button type="button" onClick={() => {
-            setSelectedTemple(selectedDiscoveryTemple.slug)
-            handleTabChange('Home')
+            if (onAskAI) {
+              onAskAI(selectedDiscoveryTemple)
+            } else {
+              setSelectedTemple(selectedDiscoveryTemple.slug)
+              handleTabChange('Home')
+            }
           }}>Ask AI</button>
         </div>
       </div>

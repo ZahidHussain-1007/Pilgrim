@@ -1,0 +1,25 @@
+BM25 docs loaded: 1162
+INFO:     127.0.0.1:59603 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59606 - "POST /api/chat HTTP/1.1" 404 Not Found
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=907, content_empty=False
+INFO:     127.0.0.1:59612 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51036 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51039 - "POST /api/chat HTTP/1.1" 404 Not Found
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=902, content_empty=False
+INFO:     127.0.0.1:56877 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60625 - "POST /api/chat HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63493 - "POST /api/chat HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63495 - "POST /api/chat HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:64545 - "POST /api/chat HTTP/1.1" 404 Not Found
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=957, content_empty=False
+INFO:     127.0.0.1:57822 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=1754, content_empty=False
+INFO:     127.0.0.1:62596 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=3121, content_empty=False
+INFO:     127.0.0.1:51427 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=1769, content_empty=False
+INFO:     127.0.0.1:61324 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=1711, content_empty=False
+INFO:     127.0.0.1:49171 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2347, content_empty=False
+INFO:     127.0.0.1:50944 - "POST /chat HTTP/1.1" 200 OK

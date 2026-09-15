@@ -16,7 +16,8 @@ export default function TempleExperienceHero({
           title={`${selectedDiscoveryTemple.name} temple drone video`}
           tabIndex={-1}
           aria-hidden="true"
-          allow="autoplay"
+          allow="autoplay; encrypted-media"
+          allowFullScreen={false}
         />
       ) : <div className="yadadri-fallback" aria-hidden="true" />}
       <div className="yadadri-video-shield" aria-hidden="true" />

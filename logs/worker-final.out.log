@@ -1,0 +1,34 @@
+INFO:     127.0.0.1:57810 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57810 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51844 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62594 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51122 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61322 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64145 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50942 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50326 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62722 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58247 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62818 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57594 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49183 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64771 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53908 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64495 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59332 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50468 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56659 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65307 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62190 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51780 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59862 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61932 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53387 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60031 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63732 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54611 - "POST /chat HTTP/1.1" 504 Gateway Timeout
+INFO:     127.0.0.1:64231 - "POST /chat HTTP/1.1" 504 Gateway Timeout
+INFO:     127.0.0.1:55041 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55372 - "POST /chat HTTP/1.1" 504 Gateway Timeout
+INFO:     127.0.0.1:55410 - "POST /chat HTTP/1.1" 504 Gateway Timeout
+INFO:     127.0.0.1:62727 - "GET /health HTTP/1.1" 200 OK

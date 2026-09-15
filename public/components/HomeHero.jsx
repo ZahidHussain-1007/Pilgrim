@@ -7,6 +7,7 @@ export default function HomeHero({
   toggleVoice,
   handleTabChange,
   handleSend,
+  beginPilgrimagePlanning,
   query,
   setQuery
 }) {
@@ -34,7 +35,7 @@ export default function HomeHero({
         </button>
         <button
           className="quick-chip"
-          onClick={() => handleSend('Plan my pilgrimage')}
+          onClick={beginPilgrimagePlanning}
         >
           Plan My Pilgrimage
         </button>
@@ -65,7 +66,7 @@ export default function HomeHero({
       </div>
 
       <div className="home-plan-cta">
-        <button className="home-plan-button" type="button" onClick={() => handleSend('Plan my pilgrimage')}>
+        <button className="home-plan-button" type="button" onClick={beginPilgrimagePlanning}>
           <span>✦ Plan My Trip</span><span aria-hidden="true">→</span>
         </button>
       </div>

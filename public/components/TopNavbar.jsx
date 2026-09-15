@@ -1,4 +1,5 @@
 import React from 'react'
+import { Home, Info, Settings } from 'lucide-react'
 
 function GoogleMark() {
   return (
@@ -11,7 +12,7 @@ function GoogleMark() {
   )
 }
 
-export default function TopNavbar({ user, t, signInWithGoogle, signOut }) {
+export default function TopNavbar({ user, t, signInWithGoogle, signOut, handleTabChange, startNewConversation }) {
   return (
     <header className="top-navbar">
       <div className="nav-brand">
@@ -19,8 +20,12 @@ export default function TopNavbar({ user, t, signInWithGoogle, signOut }) {
         <span className="brand-title">PilgrimAI</span>
       </div>
       <div className="nav-links">
-        <a href="#about" className="nav-link">{t.navAbout}</a>
-        <a href="#features" className="nav-link">{t.navFeatures}</a>
+        <button className="nav-link nav-action" onClick={startNewConversation}>
+          <Home size={15} /> Home
+        </button>
+        <button className="nav-link nav-action" onClick={() => handleTabChange('About')}>
+          <Info size={15} /> {t.navAbout}
+        </button>
         {user ? (
           <div className="signed-in-account">
             {user.avatarUrl ? (
@@ -37,6 +42,9 @@ export default function TopNavbar({ user, t, signInWithGoogle, signOut }) {
             <span>Continue with Google</span>
           </button>
         )}
+        <button className="settings-nav-button" onClick={() => handleTabChange('Settings')} title="Settings" aria-label="Settings">
+          <Settings size={18} />
+        </button>
       </div>
     </header>
   )

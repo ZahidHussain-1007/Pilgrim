@@ -4,7 +4,7 @@ import {
   parsePathAndApplyState as routingParsePath,
   handleTabChange as routingHandleTabChange
 } from './features/routing.js'
-import { fetchTempleVideo } from './features/templeVideo.js'
+import { resolveTempleVideo } from './features/templeVideo.js'
 import { TEMPLES_LIST } from './features/temples.js'
 import { 
   ChatRequestError, detectTempleInText, sendChatMessage, 
@@ -18,6 +18,7 @@ import TempleDiscovery from './components/TempleDiscovery.jsx'
 import TempleExperienceHero from './components/TempleExperienceHero.jsx'
 import HomeHero from './components/HomeHero.jsx'
 import ChatUI from './components/ChatUI.jsx'
+import About from './components/About.jsx'
 
 const API_BASE_URL = window.location.origin
 
@@ -41,6 +42,7 @@ const UI_TRANSLATIONS = {
     listen: 'Listen',
     errorMsg: 'Unable to reach the PilgrimAI backend. Please ensure the server is running on port 8000.',
     menu: {
+      'New Plan': 'New Plan',
       Home: 'Home',
       Temples: 'Temples',
       'Darshan Booking': 'Darshan Booking',
@@ -66,6 +68,7 @@ const UI_TRANSLATIONS = {
     listen: 'వినండి',
     errorMsg: 'సర్వర్‌ను సంప్రదించడం సాధ్యపడలేదు. దయచేసి బ్యాకెండ్ రన్ అవుతుందో లేదో తనిఖీ చేయండి.',
     menu: {
+      'New Plan': 'కొత్త యాత్ర',
       Home: 'హోమ్',
       Temples: 'ఆలయాలు',
       'Darshan Booking': 'దర్శనం బుకింగ్',
@@ -91,6 +94,7 @@ const UI_TRANSLATIONS = {
     listen: 'सुनें',
     errorMsg: 'सर्वर से संपर्क नहीं हो सका। कृपया जांचें कि बैकएंड चालू है।',
     menu: {
+      'New Plan': 'नई यात्रा',
       Home: 'होम',
       Temples: 'मंदिर',
       'Darshan Booking': 'दर्शन बुकिंग',
@@ -130,7 +134,7 @@ export default function App() {
     async function loadVideo(slug) {
       if (!slug || fetchedSlugs.current.has(slug)) return
 
-      const embedUrl = await fetchTempleVideo(slug, API_BASE_URL, controller.signal)
+      const embedUrl = await resolveTempleVideo(slug, API_BASE_URL, controller.signal)
       if (embedUrl) {
         fetchedSlugs.current.add(slug)
         setVideoUrls((prev) => ({ ...prev, [slug]: embedUrl }))
@@ -261,6 +265,18 @@ export default function App() {
     handleTabChange('Home')
   }
 
+  function beginPilgrimagePlanning() {
+    setConversationId(null)
+    setSelectedTemple(null)
+    setIsYadadriSelected(false)
+    setQuery('')
+    setMessages([{
+      who: 'bot',
+      text: 'Sure! Which temple would you like to visit? Please tell me your starting city, number of days, travel mode, and travel dates if you have them.'
+    }])
+    handleTabChange('Home')
+  }
+
   async function handleSend(textOverride) {
     const text = (textOverride ?? query).trim()
     if (!text || isLoading) return
@@ -334,43 +350,49 @@ export default function App() {
     }
   }
 
+  const immersiveTempleChat = Boolean(
+    selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples' && isChatMode
+  )
 
 
   return (
-    <div className="app-container">
+    <div className={`app-container ${immersiveTempleChat ? 'immersive-app' : ''}`}>
       {/* 1. TOP NAVBAR */}
-      <TopNavbar user={user} t={t} signInWithGoogle={signInWithGoogle} signOut={signOut} />
+      <TopNavbar user={user} t={t} signInWithGoogle={signInWithGoogle} signOut={signOut} handleTabChange={handleTabChange} startNewConversation={startNewConversation} />
 
       {/* 2. WORKSPACE */}
-      <div className="workspace" style={{ position: 'relative' }}>
+      <div className={`workspace ${selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples' ? 'video-workspace' : ''} ${immersiveTempleChat ? 'immersive-temple-chat' : ''}`} style={{ position: 'relative' }}>
         {selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples' && (
-          <div style={{ position: 'absolute', inset: 0, zIndex: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+          <div className="temple-video-layer">
             <iframe
               className="yadadri-video"
               src={videoUrls[selectedTemple]}
               tabIndex={-1}
               aria-hidden="true"
-              allow="autoplay"
+              allow="autoplay; encrypted-media"
+              allowFullScreen={false}
             />
-            <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(253, 251, 247, 0.86)' }} />
+            <div className="temple-video-wash" />
           </div>
         )}
         {/* 2. SIDEBAR */}
-        <Sidebar
-          activeTabKey={activeTabKey}
-          lang={lang}
-          t={t}
-          startNewConversation={startNewConversation}
-          handleTabChange={handleTabChange}
-          setIsYadadriSelected={setIsYadadriSelected}
-          handleSend={handleSend}
-          setLang={setLang}
-        />
+        {!immersiveTempleChat && (
+          <Sidebar
+            activeTabKey={activeTabKey}
+            lang={lang}
+            t={t}
+            startNewConversation={startNewConversation}
+            handleTabChange={handleTabChange}
+            setIsYadadriSelected={setIsYadadriSelected}
+            handleSend={handleSend}
+            setLang={setLang}
+          />
+        )}
 
         {/* MAIN CONTENT AREA */}
         <main 
-          className={`main-content ${activeTabKey === 'Temples' ? 'temples-page-main' : ''}`}
-          style={{ position: 'relative', zIndex: 1, backgroundColor: (selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples') ? 'transparent' : undefined }}
+          className={`main-content ${activeTabKey === 'Temples' ? 'temples-page-main' : ''} ${selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples' ? 'video-main' : ''} ${immersiveTempleChat ? 'immersive-chat-main' : ''}`}
+          style={{ position: 'relative', zIndex: 2, backgroundColor: (selectedTemple && videoUrls[selectedTemple] && activeTabKey !== 'Temples') ? 'transparent' : undefined }}
         >
           {activeTabKey === 'Temples' ? (
             <TempleDiscovery
@@ -388,6 +410,8 @@ export default function App() {
               favorites={favorites}
               loadConversation={loadConversation}
             />
+          ) : activeTabKey === 'About' ? (
+            <About />
           ) : !isChatMode ? (
             <HomeHero
               t={t}
@@ -397,6 +421,7 @@ export default function App() {
               handleSend={handleSend}
               query={query}
               setQuery={setQuery}
+              beginPilgrimagePlanning={beginPilgrimagePlanning}
             />
           ) : (
             <ChatUI

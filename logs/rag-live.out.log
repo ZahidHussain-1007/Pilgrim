@@ -1,0 +1,53 @@
+BM25 docs loaded: 1162
+INFO:     127.0.0.1:50329 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2661, content_empty=False
+INFO:     127.0.0.1:62724 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58249 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62821 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2339, content_empty=False
+INFO:     127.0.0.1:57596 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49185 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2345, content_empty=False
+INFO:     127.0.0.1:64774 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2718, content_empty=False
+INFO:     127.0.0.1:53910 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2683, content_empty=False
+INFO:     127.0.0.1:57935 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2386, content_empty=False
+INFO:     127.0.0.1:59334 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2923, content_empty=False
+INFO:     127.0.0.1:50470 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2778, content_empty=False
+INFO:     127.0.0.1:56661 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=3009, content_empty=False
+INFO:     127.0.0.1:64417 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2490, content_empty=False
+INFO:     127.0.0.1:62192 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=4339, content_empty=False
+INFO:     127.0.0.1:51782 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=3082, content_empty=False
+INFO:     127.0.0.1:59866 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2633, content_empty=False
+INFO:     127.0.0.1:61935 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=1848, content_empty=False
+INFO:     127.0.0.1:59410 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2656, content_empty=False
+INFO:     127.0.0.1:62424 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2595, content_empty=False
+INFO:     127.0.0.1:63734 - "POST /chat HTTP/1.1" 200 OK
+Loading bus map (first time can take 1–2 minutes)...
+Bus map loaded.
+INFO:     127.0.0.1:54616 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64234 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61563 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55045 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55374 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55423 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62728 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57623 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60544 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62900 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58261 - "POST /chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58402 - "POST /chat HTTP/1.1" 200 OK
+  Groq info: model=openai/gpt-oss-20b, finish_reason=stop, tokens=2789, content_empty=False
+INFO:     127.0.0.1:53009 - "POST /chat HTTP/1.1" 200 OK

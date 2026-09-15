@@ -1,0 +1,21 @@
+=http://127.0.0.1:8002 : The term '=http://127.0.0.1:8002' is not recognized as the name of a cmdlet, function, script 
+file, or operable program. Check the spelling of the name, or if a path was included, verify that the path is correct 
+and try again.
+At line:1 char:1
++ ='http://127.0.0.1:8002'; ='/chat'; & 'C:\Users\trivi\OneDrive\Deskto ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=http://127.0.0.1:8002:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+=/chat : The term '=/chat' is not recognized as the name of a cmdlet, function, script file, or operable program. 
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:27
++ ='http://127.0.0.1:8002'; ='/chat'; & 'C:\Users\trivi\OneDrive\Deskto ...
++                           ~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (=/chat:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+INFO:     Started server process [26580]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)

@@ -1,0 +1,5 @@
+INFO:     127.0.0.1:50757 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63030 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63044 - "POST /chat HTTP/1.1" 502 Bad Gateway
+INFO:     127.0.0.1:61310 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61310 - "POST /chat HTTP/1.1" 502 Bad Gateway

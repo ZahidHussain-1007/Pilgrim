@@ -1,4 +1,5 @@
 import asyncio
+import os
 from typing import Optional
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -28,16 +29,18 @@ async def lifespan(app: FastAPI):
     def init_qdrant():
         if settings.qdrant_url:
             return QdrantClient(url=settings.qdrant_url, api_key=settings.qdrant_api_key)
-        db_path = Path(__file__).resolve().parent.parent / "qdrant_data"
+        db_path = Path(os.getenv("QDRANT_LOCAL_PATH", Path(__file__).resolve().parent.parent / "qdrant_data"))
         return QdrantClient(path=str(db_path))
     state.qdrant = await asyncio.to_thread(init_qdrant)
 
     # 3. ML Models
     def init_models():
         from sentence_transformers import SentenceTransformer
-        from FlagEmbedding import FlagReranker
         embedder = SentenceTransformer("BAAI/bge-m3")
-        reranker = FlagReranker("BAAI/bge-reranker-v2-m3", use_fp16=False)
+        reranker = None
+        if os.getenv("ENABLE_RERANKER", "false").lower() == "true":
+            from FlagEmbedding import FlagReranker
+            reranker = FlagReranker("BAAI/bge-reranker-v2-m3", use_fp16=False)
         return embedder, reranker
     state.embedder, state.reranker = await asyncio.to_thread(init_models)
 

@@ -80,6 +80,19 @@ def _clarify_rule(query):
         return {**rule, "trigger": hit}
     return None
 
+def _is_plan_request(query):
+    text = normalize(query)
+    return any(
+        phrase in text
+        for phrase in (
+            "plan my pilgrimage",
+            "plan my trip",
+            "plan my visit",
+            "create an itinerary",
+            "make an itinerary",
+        )
+    )
+
 
 def _pack(decision, results, answer):
     sources = []
@@ -552,6 +565,27 @@ async def ask(query: str, app_state, session=None):
         return _run_travel(pending_mode["temple_id"], pending_mode["source"], session, mode=chosen)
 
     pending_origin = session.get("pending_travel_origin")
+    if _is_plan_request(query):
+        temple_name = session.get("temple_name")
+        temple_prompt = "" if temple_name else " Which temple would you like to visit?"
+        return {
+            "status": "needs_plan_details",
+            "entity": "planning",
+            "temple_id": session.get("temple_id"),
+            "intent": "planning",
+            "answer": (
+                f"Sure. I can plan a visit to {temple_name}.{temple_prompt} "
+                "Please also tell me your starting city, number of days, travel mode, "
+                "and travel dates if you have them."
+                if temple_name
+                else (
+                    "Sure. Which temple would you like to visit? Please also tell me "
+                    "your starting city, number of days, travel mode, and travel dates "
+                    "if you have them."
+                )
+            ),
+            "sources": [],
+        }, session
     if pending_origin and not is_route_query(query):
         if text in NO:
             session.pop("pending_travel_origin", None)

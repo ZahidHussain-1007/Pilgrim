@@ -1,5 +1,6 @@
 export const ROUTE_TO_TAB = {
   '/': 'Home',
+  '/about': 'About',
   '/temples': 'Temples',
   '/darshan': 'Darshan Booking',
   '/accommodation': 'Accommodation',
@@ -11,6 +12,7 @@ export const ROUTE_TO_TAB = {
 
 export const TAB_TO_ROUTE = {
   'Home': '/',
+  'About': '/about',
   'Temples': '/temples',
   'Darshan Booking': '/darshan',
   'Accommodation': '/accommodation',

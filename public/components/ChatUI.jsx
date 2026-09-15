@@ -26,17 +26,7 @@ export default function ChatUI({
               <>
                 <button
                   onClick={() => speakText(m.text)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '12px',
-                    color: '#C87D17',
-                    fontWeight: '700',
-                    marginTop: '8px',
-                    paddingTop: '6px',
-                    borderTop: '1px solid #EADBCB'
-                  }}
+                  className="listen-btn"
                 >
                   <Volume2 size={14} /> {t.listen}
                 </button>
@@ -59,7 +49,7 @@ export default function ChatUI({
         ))}
 
         {isLoading && (
-          <div className="chat-bubble bot" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#7A6F66' }}>
+          <div className="chat-bubble bot loading-bubble">
             <Loader2 size={16} className="animate-spin" />
             <span>Searching verified records...</span>
           </div>
@@ -67,7 +57,7 @@ export default function ChatUI({
         <div ref={threadEndRef} />
       </div>
 
-      <div className="input-shell" style={{ width: '100%', maxWidth: '100%' }}>
+      <div className="input-shell chat-input-shell">
         <input
           type="text"
           className="chat-input"

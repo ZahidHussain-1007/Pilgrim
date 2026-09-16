@@ -28,7 +28,10 @@ export async function submitFeedback(messageId, rating, baseUrl) {
 
 export function detectTempleInText(text, templesList) {
   const lower = text.toLowerCase()
-  const matched = templesList.find((tp) => lower.includes(tp.slug) || lower.includes(tp.name.toLowerCase()))
+  const matched = templesList.find((tp) => {
+    const names = [tp.slug, tp.name, ...(tp.aliases || [])]
+    return names.some((name) => lower.includes(name.toLowerCase()))
+  })
   return matched ? matched.slug : null
 }
 

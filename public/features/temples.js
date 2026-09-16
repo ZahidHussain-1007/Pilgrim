@@ -1,5 +1,5 @@
 export const TEMPLES_LIST = [
-  { slug: 'yadadri', name: 'Yadadri', folder: 'Yadadri_stay', full: 'Sri Lakshmi Narasimha Swamy Temple, Yadadri' },
+  { slug: 'yadadri', name: 'Yadadri', aliases: ['yadagiri', 'yadagirigutta'], folder: 'Yadadri_stay', full: 'Sri Lakshmi Narasimha Swamy Temple, Yadadri' },
   { slug: 'surendrapuri', name: 'Surendrapuri', folder: 'Surendrapuri_stay', full: 'Surendrapuri Mythological Theme & Temples' },
   { slug: 'swarnagiri', name: 'Swarnagiri', folder: 'swarnagiri_stay', full: 'Sri Swarnagiri Venkateswara Swamy' },
   { slug: 'basara', name: 'Basara', folder: 'Basara_stay', full: 'Sri Gnana Saraswati Temple, Basara' },

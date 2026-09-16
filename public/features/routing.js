@@ -1,5 +1,6 @@
 export const ROUTE_TO_TAB = {
   '/': 'Home',
+  '/home': 'Home',
   '/about': 'About',
   '/temples': 'Temples',
   '/darshan': 'Darshan Booking',

@@ -256,18 +256,8 @@ export default function App() {
     const target = typeof temple === 'string' ? temple : temple?.slug
     if (!target) return
     const matched = TEMPLES_LIST.find((t) => t.slug === target)
-    if (matched) {
-      setSelectedTemple(matched.slug)
-      setSelectedDiscoveryTemple(matched)
-    } else {
-      setSelectedTemple(target)
-    }
-    setIsYadadriSelected(false)
-    setActiveTabKey('Home')
-    const route = `/c/${target}`
-    if (window.location.pathname !== route) {
-      window.history.pushState({ key: 'Conversation', templeSlug: target }, '', route)
-    }
+    if (!matched) return
+    navigateToTempleConversation(matched.slug, TEMPLES_LIST, routeActions)
   }
 
   function openPurpose(key) {
@@ -366,8 +356,12 @@ export default function App() {
 
     const matchedSlug = detectTempleInText(text, TEMPLES_LIST)
     const targetTemple = matchedSlug ? matchedSlug : selectedTemple
+    const isTempleFirstMessage = Boolean(matchedSlug)
 
-    if (matchedSlug) setSelectedTemple(matchedSlug)
+    if (matchedSlug) {
+      const matchedTemple = TEMPLES_LIST.find((temple) => temple.slug === matchedSlug)
+      handleAskAI(matchedTemple)
+    }
 
     setMessages((prev) => [...prev, { who: 'user', text }])
     setQuery('')
@@ -387,7 +381,7 @@ export default function App() {
         }
         const currentPath = window.location.pathname
         const isTempleRoute = currentPath.startsWith('/c/') && TEMPLES_LIST.some((t) => t.slug === currentPath.slice(3).replace(/\/$/, ''))
-        if (!isTempleRoute && currentPath !== `/c/${activeConvId}`) {
+        if (!isTempleFirstMessage && !isTempleRoute && currentPath !== `/c/${activeConvId}`) {
           window.history.pushState({ key: 'Conversation', conversationId: activeConvId }, '', `/c/${activeConvId}`)
         }
       }
@@ -400,7 +394,7 @@ export default function App() {
         setConversationId(fallbackConvId)
         const currentPath = window.location.pathname
         const isTempleRoute = currentPath.startsWith('/c/') && TEMPLES_LIST.some((t) => t.slug === currentPath.slice(3).replace(/\/$/, ''))
-        if (!isTempleRoute && currentPath !== `/c/${fallbackConvId}`) {
+        if (!isTempleFirstMessage && !isTempleRoute && currentPath !== `/c/${fallbackConvId}`) {
           window.history.pushState({ key: 'Conversation', conversationId: fallbackConvId }, '', `/c/${fallbackConvId}`)
         }
       }
